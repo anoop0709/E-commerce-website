@@ -4,7 +4,7 @@ const userRouter = require('./route/user');
 const path = require('path');
 const layouts = require('express-ejs-layouts');
 const {urlencoded } = require('express');
-const dotenv = require('dotenv')
+const dotenv = require('dotenv').config();
 
 const mongoose  = require('mongoose');
 
@@ -15,12 +15,15 @@ app.set('view engine','ejs');
 app.use(layouts);
 app.use(express.json())
 app.use(express.urlencoded({extended:true}));
-dotenv.config();
+
 
 //database connection
-const dbUri = 'mongodb+srv://anoopsk0709:Yadhuanu87@cluster0.1ytz8lg.mongodb.net/goggles';
-mongoose.connect(dbUri)
-.then((result) => app.listen(3000))
+
+mongoose.connect(process.env.dbUri)
+.then((result) =>{ 
+    app.listen(3000);
+    console.log("dbconnected");
+})
 .catch((err)=>console.log(err));
 
 
