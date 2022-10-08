@@ -1,4 +1,7 @@
 const User = require('../model/userschema');
+const jwt = require('jsonwebtoken');
+const authMiddleware = require('../middleware/authMiddleware')
+
 
 
 const handleErrors = (err)=>{
@@ -8,9 +11,17 @@ const handleErrors = (err)=>{
     
     
     if(err.code === 11000){
-        error.email = 'This email is already registered';
+        Error.email = 'This email is already registered';
         return Error;
     }
+    if(err.message === 'user not registered'){
+        Error.email = 'Email not registered';
+
+    }
+    if(err.message === 'incorrect password'){
+      Error.password = 'Incorrect password';
+
+  }
 
     if(err.message.includes('users validation failed')){
        
@@ -20,12 +31,19 @@ const handleErrors = (err)=>{
           Error[error.properties.path] = error.properties.message;
 
       }); 
-   
 
     }
     console.log(Error);
     return Error;
 }
+
+//jason web token
+let maxAge = 3 * 24 * 60 * 60;
+const createToken = (id) => {
+   return jwt.sign({ id },process.env.jwtSecretKey,{ expiresIn:maxAge })
+}
+
+
 
 module.exports = {
     
@@ -42,19 +60,43 @@ module.exports = {
     },
     dosignup: async (req,res)=>{
         console.log(req.body);
-        const {fname,lname,email,password,phone} = req.body;
+        const {fname,email,password,phone} = req.body;
         console.log(fname);
 
         try{
-            console.log(45678);
-            const user = await User.create({fname,lname,email,password,phone});
-            res.json(user);
+            const user = await User.create({fname,email,password,phone});
+            let token = createToken(user._id);
+            res.cookie('jwt', token , {httpOnly:true, maxAge:maxAge * 1000})
+            
+            res.json({user});
             
         }catch(err){
-            console.log(000);
+            
             const errors = handleErrors(err);
-            console.log(errors);
-             res.json(errors);
+             res.json({errors});
         }
     },
+
+    doLogin: async (req,res) => {
+       
+        const {email,password} = req.body;
+        console.log(email,password);
+
+        try{
+            const user = await User.login(email,password);
+            let token = createToken(user._id);
+            res.cookie('jwt', token , {httpOnly:true, maxAge:maxAge * 1000})
+            console.log(user);
+            res.json({user})
+        }catch(err){
+            const errors =handleErrors(err);
+            res.json({errors})
+        }
+      
+    },
+    getlogout:(req,res)=>{
+        res.cookie('jwt','',{maxAge:1})
+        res.redirect('/')
+
+    }
 }

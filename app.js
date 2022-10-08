@@ -4,7 +4,8 @@ const userRouter = require('./route/user');
 const path = require('path');
 const layouts = require('express-ejs-layouts');
 const {urlencoded } = require('express');
-const dotenv = require('dotenv').config();
+require('dotenv').config();
+const cookieParser = require('cookie-parser');
 
 const mongoose  = require('mongoose');
 
@@ -15,6 +16,7 @@ app.set('view engine','ejs');
 app.use(layouts);
 app.use(express.json())
 app.use(express.urlencoded({extended:true}));
+app.use(cookieParser());
 
 
 //database connection

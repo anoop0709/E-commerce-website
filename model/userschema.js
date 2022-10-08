@@ -12,10 +12,6 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:[true,'please enter your  First name']
     },
-    lname:{
-        type:String,
-        required:[true,'please enter your Last name']
-    },
     email:{
         type:String,
         required:[true,'please enter your Email'],
@@ -51,11 +47,24 @@ const userSchema = new mongoose.Schema({
 
 
 }) 
-userSchema.pre('save',async (next)=>{
+userSchema.pre('save',async function (next){
 const salt = await bcrypt.genSalt();
 this.password = await bcrypt.hash(this.password,salt);
     next();
 })
+
+userSchema.statics.login = async function (email,password) {
+    const user = await this.findOne({email});
+    if(user){
+        const auth = await bcrypt.compare(password,user.password);
+        if(auth){
+            return user;
+        }
+        throw Error('incorrect password');
+    }
+    throw Error('user not registered');
+    
+}
 
 const User = mongoose.model('users',userSchema);
 

@@ -1,25 +1,24 @@
-<div class="container mx-auto w-50 mb-5 text-left ">
+<div class="container mx-auto w-100 mb-5 text-left ">
     <!-- <button type="button" class="overlay-close1-signup">
         <i class="fa fa-times" aria-hidden="true"></i>
     </button> -->
     <div class="wrap">
-        <h5 class="text-center mb-4">signup Now</h5>
-        <div class="login p-5 bg-dark mx-auto mw-100">
-            <form id="signup">
+        <h5 class="text-center mb-4 text-danger">signup Now</h5>
+        <div class="login p-5 bg-dark w-100 row display-flex">
+            <div class="col-md-6">
+                <img src="/images/team3.jpg" alt="">
+            </div>
+            
+            <form id="signup" class="col-md-6 px-5">
                 
                 <div class="form-group">
-                    <label class="mb-2">First Name</label>
+                    <label class="mb-2">Full Name</label>
                     <input type="text" class="form-control" id="fName" placeholder="" name="fname" >
                
                     <div class="fname error text-danger mt-3 h5"></div>
                    
                 </div>
-                <div class="form-group">
-                    <label class="mb-2">Last Name</label>
-                    <input type="text" class="form-control" id="lName" placeholder="" name="lname" >
-                    
-                    <div class="lname error text-danger mt-3 h5"></div>
-                </div>
+                
                 <div class="form-group">
                     <label class="mb-2">Email</label>
                     <input type="text" class="form-control" id="email" aria-describedby="emailHelp" name="email" placeholder="" >
@@ -39,9 +38,9 @@
                     
                     <div class="phone error text-danger mt-3 h5"></div>
                 </div>
-                
-                <button id="subbtn" class="btn btn-primary mb-4">Sign up</button>
-
+                <div class="text-right mt-5">
+                <button id="subbtn" class="btn btn-danger mb-4">Sign up</button>
+            </div>
             </form>
         </div>
         <!---->
@@ -54,45 +53,46 @@
     
 const form = document.querySelector('#signup');
 const btn = document.getElementById('subbtn');
-console.log(form);
  btn.addEventListener('click',async (e)=>{
     e.preventDefault();
-console.log('hai');
     
-const fnameError = document.querySelector('.fname.error');
-const lnameError = document.querySelector('.lname.error');
-const emailError = document.querySelector('.email.error');
-const passwordError = document.querySelector('.password.error');
-const phoneError = document.querySelector('.phone.error');
+const fnameError = document.querySelector('.fname');
+const emailError = document.querySelector('.email');
+const passwordError = document.querySelector('.password');
+const phoneError = document.querySelector('.phone');
+
+            fnameError.textContent = '';
+            emailError.textContent = '';
+            passwordError.textContent = '';
+            phoneError.textContent = ''; 
 
 
 
     const fname = form.fname.value;
-    const lname = form.lname.value;
     const email = form.email.value;
     const password = form.password.value;
     const phone = form.phone.value;
    
-    console.log(fname,lname,email,password,phone);
 
 
     try{
         const res = await fetch('/signup',{
             method:'POST',
-            body:JSON.stringify({fname,lname,email,password,phone}),
+            body:JSON.stringify({fname,email,password,phone}),
             headers : {'Content-Type':'application/json'}
 
         });
        
         const data = await res.json();
-        console.log(data);
         if(data.errors){
             fnameError.textContent = data.errors.fname;
-            lnameError.textContent = data.errors.lname;
             emailError.textContent = data.errors.email;
             passwordError.textContent = data.errors.password;
             phoneError.textContent = data.errors.phone;
 
+        }
+        if(data.user){
+            location.assign('/login')
         }
 
     }catch(err){

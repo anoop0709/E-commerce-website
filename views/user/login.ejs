@@ -3,23 +3,28 @@
         <i class="fa fa-times" aria-hidden="true"></i>
     </button> -->
     <div class="wrap">
-        <h5 class="text-center mb-4">Login Now</h5>
-        <div class="login p-5 bg-dark mx-auto mw-100">
-            <form action="#" method="post">
+        <h5 class="text-center mb-4 text-danger">Login Now</h5>
+        <div class="login p-5 bg-dark mx-auto mw-100 row display-flex ">
+            <div class="col-md-6">
+                <img src="/images/team4.jpg" alt="">
+            </div>
+            <form id="login" class="col-md-6 px-5 ">
                 <div class="form-group">
                     <label class="mb-2">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="" required="">
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="" name="email" >
                     <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    <div class="email error text-danger mt-3 h5"></div>
                 </div>
                 <div class="form-group">
                     <label class="mb-2">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="" required="">
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="" name="password">
+                    <div class="password error text-danger mt-3 h5"></div>
                 </div>
-                <div class="form-check mb-2">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                <div class="text-right mt-5">
+                    <button id="submt" class="btn btn-danger mb-4  ">Sign In</button>
+
                 </div>
-                <button type="submit" class="btn btn-primary submit mb-4">Sign In</button>
+                
 
             </form>
         </div>
@@ -27,3 +32,50 @@
     </div>
 </div>
 <!---->
+<script> 
+
+
+    
+    const form = document.querySelector('#login');
+    const btn = document.getElementById('submt');
+     btn.addEventListener('click', async (e)=>{
+        e.preventDefault();
+    const emailError = document.querySelector('.email');
+    const passwordError = document.querySelector('.password');
+                
+     emailError.textContent = '';
+     passwordError.textContent = '';
+
+        const email = form.email.value;
+        const password = form.password.value;
+        
+        try{
+            const res = await fetch('/login',{
+                method:'POST',
+                body:JSON.stringify({email,password}),
+                headers : {'Content-Type':'application/json'}
+    
+            });
+           
+            const data = await res.json();
+            console.log(data);
+            if(data.errors){
+                
+                emailError.textContent = data.errors.email;
+                passwordError.textContent = data.errors.password;
+               
+    
+            }
+            if(data.user){
+                const user = data.user;
+                location.assign('/');
+            }
+    
+        }catch(err){
+               console.log(err);
+        }
+    
+    }) 
+     
+    
+     </script> 
