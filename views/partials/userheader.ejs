@@ -4,7 +4,8 @@
             <h6>Need Help</h6>
             <ul>
                 <li>
-                    <i class="fas fa-phone"></i> Call</li>
+                    <i class="fas fa-phone"></i> Call
+                </li>
                 <li class="number-phone mt-3">080034523723</li>
             </ul>
         </div>
@@ -15,61 +16,72 @@
             </h1>
         </div>
 
-        <div class="col-md-3 top-info-cart text-right mt-lg-4">
-            <ul class="cart-inner-info">
-               <% if(user){ %>
-                <div class="dropdown mw-50">
-                    <button class="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <%= user.fname %>
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item text-danger" href="/useraccount">Account</a></li>
-                      <li><a class="dropdown-item text-danger" href="/logout">logout</a></li>
-                    </ul>
-                  </div>
-                <% } else { %>
-                
 
+        <% if(user){ %>
+            <div class="col-md-3 top-info-cart text-right mt-lg-4 navbar">
+            <div class="dropdown mw-50">
+                <button class="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <%= user.fname %>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item text-danger" href="/useraccount">Account</a></li>
+                    <li><a class="dropdown-item text-danger" href="/logout">logout</a></li>
+                </ul>
+            </div>
+            <div class="border-danger">
+                <a href="/wishlist" class="text-danger"> Wishlist<i class="fa-regular fa-heart mx-2"></i></a>
+            </div>
+            
+                <ul class="cart-inner-info">
+                    <li class="galssescart galssescart2 cart cart box_1">
+                        <form action="#" method="post" class="last">
+                            <input type="hidden" name="cmd" value="_cart">
+                            <input type="hidden" name="display" value="1">
+                            <button class="top_googles_cart" type="submit" name="submit" value="">
+                                My Cart
+                                <i class="fas fa-cart-arrow-down"></i>
+                            </button>
+                        </form>
+                    </li>
+                   
+                </ul>
+            </div>
+            <% } else { %>
 
-        
-                <li class="button-signup">
-                    <a class="btn-open-signup" href="/signup">
-                        <span aria-hidden="true">Signup</span>
-                    </a>
-                </li>
-                <li class="button-log">
-                    <a class="btn-open" href="/login">
-                        <span aria-hidden="true">Login</span>
-                    </a>
-                </li>
+            <div class="col-md-2 text-right navbar">
+                        <a class="btn-open-signup nav-link text-danger" href="/signup">
+                            <span aria-hidden="true">Signup</span>
+                        </a>
+                    
+                   
+                        <a class="btn-open-login nav-link text-danger" href="/login">
+                            <span aria-hidden="true">Login</span>
+                        </a>
+                   
+                   
                
-                <li class="galssescart galssescart2 cart cart box_1">
-                    <form action="#" method="post" class="last">
-                        <input type="hidden" name="cmd" value="_cart">
-                        <input type="hidden" name="display" value="1">
-                        <button class="top_googles_cart" type="submit" name="submit" value="">
-                            My Cart
-                            <i class="fas fa-cart-arrow-down"></i>
-                        </button>
-                    </form>
-                </li>
-         <% } %>
-            </ul>
+            </div>
+               
+            
+               
+                <% } %>
+               
 
-            <!-- signup post method -->
-           
-            <!---->
-        </div>
+                    <!-- signup post method -->
+
+                    <!---->
+               
     </div>
-   
-     <!-- <div class="search">
+
+    <!-- <div class="search">
         <div class="mobile-nav-button">
             <button id="trigger-overlay" type="button">
                 <i class="fas fa-search"></i>
             </button>
         </div> -->
-        <!-- open/close -->
-        <!-- <div class="overlay overlay-door">
+    <!-- open/close -->
+    <!-- <div class="overlay overlay-door">
             <button type="button" class="overlay-close">
                 <i class="fa fa-times" aria-hidden="true"></i>
             </button>
@@ -81,16 +93,17 @@
             </form>
 
         </div> -->
-        <!-- open/close -->
+    <!-- open/close -->
     <!-- </div>  -->
-   
+
     <label class="top-log mx-auto"></label>
     <nav class="navbar navbar-expand-lg navbar-light bg-light top-header mb-2">
 
-        <button class="navbar-toggler mx-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-            aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler mx-auto" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
             <span class="navbar-toggler-icon">
-                
+
             </span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -114,7 +127,7 @@
 
         </div>
     </nav>
-   
+
 </header>
 
 <!-- <script>

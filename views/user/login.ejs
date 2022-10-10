@@ -4,78 +4,214 @@
     </button> -->
     <div class="wrap">
         <h5 class="text-center mb-4 text-danger">Login Now</h5>
-        <div class="login p-5 bg-dark mx-auto mw-100 row display-flex ">
+        <div class="login p-5 bg-dark mx-auto mw-100 row  ">
             <div class="col-md-6">
                 <img src="/images/team4.jpg" alt="">
             </div>
             <form id="login" class="col-md-6 px-5 ">
+                <h5 id="verifymsg" class="text-center"></h5>
                 <div class="form-group">
                     <label class="mb-2">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="" name="email" >
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        placeholder="" name="email">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                        else.</small>
                     <div class="email error text-danger mt-3 h5"></div>
                 </div>
                 <div class="form-group">
                     <label class="mb-2">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="" name="password">
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder=""
+                        name="password">
                     <div class="password error text-danger mt-3 h5"></div>
                 </div>
                 <div class="text-right mt-5">
                     <button id="submt" class="btn btn-danger mb-4  ">Sign In</button>
+                    <button id="verifyaccount" class="btn btn-danger mb-4"> verify Account</button>
 
                 </div>
+
+
+
+            </form>
+            <form id="enterphone" style="display: none;" class="col-md-6 px-5">
+                <div class="form-group">
+                    <label class="mb-2">Email address</label>
+                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
+                        placeholder="" name="email">
+                </div>
+                <div class="form-group">
+                    <label class="mb-2 mt-2">Enter a valid phone number</label>
+                    <input type="tel" class="form-control" id="phoneinp" placeholder="" name="phoneinp">
+                </div>
+                    <div class="text-right mt-5">
+                        <button id="phonesubmt" class="btn btn-danger mb-4  ">Send OTP</button>
+
+
+                    </div>
+
                 
+            </form>
+            <form id="otp" style="display: none;" class="col-md-6 px-5">
+                <div class="form-group">
+
+                    <input type="text" class="form-control" id="otpinp" placeholder="" name="otpvalue">
+                    <label class="mb-2 mt-2">Enter OTP for verification</label>
+
+                </div>
+                <div class="text-center">
+                    <!-- Button HTML (to Trigger Modal) -->
+                    <a href="#myModal" class="btn btn-danger" data-toggle="modal" id="otpbtn">verify</a>
+                </div>
+
+
+
+
 
             </form>
         </div>
         <!---->
     </div>
+    <div id="myModal" class="modal fade">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">&#xE876;</i>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center responsetext"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success btn-block" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!---->
-<script> 
+<script>
 
 
-    
+
     const form = document.querySelector('#login');
     const btn = document.getElementById('submt');
-     btn.addEventListener('click', async (e)=>{
+    const verifybtn = document.getElementById('verifyaccount');
+    const phonesubmtbtn = document.getElementById('phonesubmt');
+    const phoneInpform = document.getElementById('enterphone');
+    const otpform = document.getElementById('otp');
+    const otpbtn = document.getElementById('otpbtn');
+    let emailValue;
+    let phonenumberValue;
+    
+    btn.addEventListener('click', async (e) => {
         e.preventDefault();
-    const emailError = document.querySelector('.email');
-    const passwordError = document.querySelector('.password');
-                
-     emailError.textContent = '';
-     passwordError.textContent = '';
+        const emailError = document.querySelector('.email');
+        const passwordError = document.querySelector('.password');
+
+        emailError.textContent = '';
+        passwordError.textContent = '';
 
         const email = form.email.value;
         const password = form.password.value;
-        
-        try{
-            const res = await fetch('/login',{
-                method:'POST',
-                body:JSON.stringify({email,password}),
-                headers : {'Content-Type':'application/json'}
-    
+
+        try {
+            const res = await fetch('/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password }),
+                headers: { 'Content-Type': 'application/json' }
+
             });
-           
+
             const data = await res.json();
             console.log(data);
-            if(data.errors){
-                
+            if (data.errors) {
+
                 emailError.textContent = data.errors.email;
                 passwordError.textContent = data.errors.password;
-               
+                if (data.errors.email == 'Your account is not verified') {
+                    const verifyMsg = document.getElementById('verifymsg');
+                    verifyMsg.textContent = "Please verify your account with verify button";
+                }
+                verifybtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    form.style.display = 'none';
+                    phoneInpform.style.display = 'block';
+
+                })
+                phonesubmtbtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const phoneNumber = phoneInpform.phoneinp.value;
+                    const email = phoneInpform.email.value;
+                    emailValue = email;
+                    phonenumberValue = phoneNumber;
+                    const response = await fetch('/sendnotification', {
+                        method: 'POST',
+                        body: JSON.stringify({ phone: phoneNumber }),
+                        headers: { 'Content-Type': 'application/json' }
+                    }).catch(e => console.log(e));
+
+                    if (response.ok) {
+                        phoneInpform.style.display = 'none';
+                        otpform.style.display = 'block';
+                    }
+                })
+                otpbtn.addEventListener('click',async (e)=>{
+                e.preventDefault();
+
+                const otpInpValue = otpform.otpvalue.value;
+                const responseText = document.querySelector('.responsetext');
+
+                const otpData = {
+                    phonenumber:phonenumberValue,
+                    email:emailValue,
+                    otp:otpInpValue
+                };
+                try{
+
+                    const response = await fetch('/verify-otp',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json','Accept':'application/json'},
+                    body:JSON.stringify(otpData)
+                   
+                });
+                console.log(response+"hoi");
+                const check = await response.json();
+                console.log(check+"hai");
+                // 
+                
+                
+                responseText.textContent = check;
+                console.log("hai please print "+ check);
+                otpform.style.display = 'none';
+                //responseText.style.display = 'block';
+
+                setTimeout(() => {
+                    location.assign('/login');
     
+               },3000);
+               
+
+                
+               
+                }catch{(e => console.log(e))};
+
+               
+            });
+
+
             }
-            if(data.user){
+            if (data.user) {
                 const user = data.user;
                 location.assign('/');
             }
-    
-        }catch(err){
-               console.log(err);
+
+        } catch (err) {
+            console.log(err);
         }
-    
-    }) 
-     
-    
-     </script> 
+
+    })
+
+
+</script>

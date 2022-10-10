@@ -26,6 +26,7 @@
     "express-ejs-layouts": "^2.5.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.5",
+    "nocache": "^3.0.4",
     "nodemon": "^2.0.20",
     "twilio": "^3.82.2",
     "urlencode": "^1.1.0",

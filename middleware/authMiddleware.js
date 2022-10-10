@@ -12,7 +12,7 @@ module.exports = {
             jwt.verify(token,process.env.jwtSecretKey,(err,decodedToken)=>{
                 if(err){
                     console.log(err.message);
-                    res.redirect('/login')
+                    res.redirect('/login');
                 }else{
                     next();
                 }

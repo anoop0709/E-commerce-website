@@ -1,13 +1,16 @@
 const express = require('express');
 const app = express();
 const userRouter = require('./route/user');
+const adminRouter = require('./route/admin')
 const path = require('path');
 const layouts = require('express-ejs-layouts');
 const {urlencoded } = require('express');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
+const noCache = require('nocache');
 
 const mongoose  = require('mongoose');
+
 
 app.use(express.static('public'));
 
@@ -17,6 +20,7 @@ app.use(layouts);
 app.use(express.json())
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
+app.use(noCache());
 
 
 //database connection
@@ -31,5 +35,6 @@ mongoose.connect(process.env.dbUri)
 
 
 app.use('/',userRouter);
+app.use('/admin',adminRouter)
 
 module.exports = app;

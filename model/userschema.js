@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema({
     phone:{
         type:Number,
         required:[true,'please enter a phonenumber'],
+    
         minlength:[10,'please enter a valid phonenumber']
     },
     address:{
@@ -36,6 +37,11 @@ const userSchema = new mongoose.Schema({
     isBlocked:{
         type:Boolean,
         default:false
+    },
+    isVerified:{
+        type:Boolean,
+        default:false
+
     },
     cart:{
         type:Array
@@ -54,15 +60,23 @@ this.password = await bcrypt.hash(this.password,salt);
 })
 
 userSchema.statics.login = async function (email,password) {
-    const user = await this.findOne({email});
+    const user = await this.findOne({email:email});
+    
     if(user){
+        if(user.isVerified == true){
         const auth = await bcrypt.compare(password,user.password);
         if(auth){
-            return user;
+            if(user.isBlocked == false){
+                
+                return user;
+            }
+           throw Error('Your account is blocked');
         }
-        throw Error('incorrect password');
+        throw Error('Incorrect password');
     }
-    throw Error('user not registered');
+    throw Error('User not verified');
+}
+    throw Error('User not registered');
     
 }
 
