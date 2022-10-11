@@ -17,6 +17,7 @@ app.use(express.static('public'));
 
 app.set('view engine','ejs');
 app.use(layouts);
+app.set('layout','layout','adminlayout');
 app.use(express.json())
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
@@ -35,6 +36,6 @@ mongoose.connect(process.env.dbUri)
 
 
 app.use('/',userRouter);
-app.use('/admin',adminRouter)
+app.use('/',adminRouter)
 
 module.exports = app;

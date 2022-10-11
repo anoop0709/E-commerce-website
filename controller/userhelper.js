@@ -1,6 +1,6 @@
 const User = require('../model/userschema');
 const jwt = require('jsonwebtoken');
-const authMiddleware = require('../middleware/authMiddleware')
+const authMiddleware = require('../middleware/userauthMiddleware')
 require('dotenv').config();
 const account_SID = process.env.account_SID;
 const auth_token = process.env.auth_Token;
@@ -65,17 +65,15 @@ module.exports = {
     
     homePage:(req,res)=>{
        
-            res.render('./user/index')
-        
-       
+            res.render('./user/index',{layout:"layout"})
         
     },
     getsignUp:(req,res)=>{
-        res.render('./user/signup')
+        res.render('./user/signup',{layout:"layout"})
 
     },
     getlogin:(req,res)=>{
-        res.render('./user/login')
+        res.render('./user/login',{layout:"layout"})
 
     },
     dosignup: async (req,res)=>{
@@ -148,6 +146,6 @@ module.exports = {
 
     },
     userAccount:(req,res)=>{
-        res.render('./user/useraccount')
+        res.render('./user/useraccount',{layout:"layout"})
     }
 }

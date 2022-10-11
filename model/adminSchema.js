@@ -6,9 +6,13 @@ const { isEmail } = require('validator');
 
 
 const adminSchema = new mongoose.Schema({
+    fname:{
+        type:String,
+        required:[true,'please enter your fullname']
+    },
     email:{
             type:String,
-            required:[true,'please enter your Email'],
+            required:[true,'please enter your email'],
             unique:true,
             tolowecase:true,
             validate:[isEmail,'please enter a valid email'],
@@ -20,6 +24,14 @@ const adminSchema = new mongoose.Schema({
         }
     
 })
+
+adminSchema.pre('save',async function (next){
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password,salt);
+        next();
+    })
+
+
 adminSchema.statics.login = async function (email,password) {
     const admin = await this.findOne({email:email});
     

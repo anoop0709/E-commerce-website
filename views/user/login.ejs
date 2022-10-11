@@ -26,7 +26,7 @@
                 </div>
                 <div class="text-right mt-5">
                     <button id="submt" class="btn btn-danger mb-4  ">Sign In</button>
-                    <button id="verifyaccount" class="btn btn-danger mb-4"> verify Account</button>
+                    <button id="verifyaccount" class="btn btn-danger mb-4" style="display: none;"> verify Account</button>
 
                 </div>
 
@@ -132,6 +132,7 @@
                 if (data.errors.email == 'Your account is not verified') {
                     const verifyMsg = document.getElementById('verifymsg');
                     verifyMsg.textContent = "Please verify your account with verify button";
+                    verifybtn.style.display = 'block';
                 }
                 verifybtn.addEventListener('click', (e) => {
                     e.preventDefault();

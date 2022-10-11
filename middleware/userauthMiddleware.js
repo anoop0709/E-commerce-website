@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../model/userschema');
+require('dotenv').config();
 
 
 
@@ -12,13 +13,14 @@ module.exports = {
             jwt.verify(token,process.env.jwtSecretKey,(err,decodedToken)=>{
                 if(err){
                     console.log(err.message);
-                    res.redirect('/login');
-                }else{
                     next();
-                }
+                }else{
+                    res.redirect('/');
+                    
+                }   
             })
         }else{
-            res.redirect('/login');
+           next();
         }
 
 
@@ -32,7 +34,8 @@ module.exports = {
                 if(err){
                     console.log(err.message);
                     res.locals.user = null;
-                    next();
+                   next();
+        
                 }else{
                     let user = await User.findById(decodedToken.id);
                     res.locals.user = user;
@@ -42,6 +45,7 @@ module.exports = {
         }else{
             res.locals.user = null;
             next();
+        
         }
     }
 }

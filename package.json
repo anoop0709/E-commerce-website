@@ -19,6 +19,8 @@
   "homepage": "https://github.com/anoop0709/E-commerce-website#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "cache": "^3.0.0",
+    "clean": "^4.0.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",

@@ -1,9 +1,14 @@
 <section class="login col-md-4">
-    <h3 class="text-white mt-3 mb-3">Login</h3>
+    <h3 class="text-white mt-3 mb-3">Admin Signup</h3>
     <i class="fa-solid fa-lock"></i>
-    <form id="loginform">
+    <form id="addadminform">
         <div class="label">
-            <label for="username">email</label>
+            <label for="username">Full name</label>
+            <input type="text" name="fname">
+            <div class="nameerror text-danger mt-3 h5"></div>
+        </div>
+        <div class="label">
+            <label for="username">Email</label>
             <input type="text" name="email">
             <div class="emailerror text-danger mt-3 h5"></div>
         </div>
@@ -12,8 +17,8 @@
             <input type="password" name="password">
             <div class="passworderror text-danger mt-3 h5"></div>
         </div>
-        <div class="label">
-            <button type="submit" id="loginbtn">Log in</button>
+        <div class="label text-right">
+            <button type="submit" id="signupbtn">signup</button>
         </div>
 
     </form>
@@ -21,32 +26,35 @@
 </section>
 
 
-
 <script>
-    const adminform = document.getElementById('loginform');
-    const loginbtn = document.getElementById('loginbtn');
+    const adminform = document.getElementById('addadminform');
+    const loginbtn = document.getElementById('signupbtn');
 
     loginbtn.addEventListener('click',async (e)=>{
         e.preventDefault();
-        
+
+        const fname = adminform.fname.value;
         const email = adminform.email.value;
         const password = adminform.password.value;
 
-       
+        console.log(fname);
+
+        const nameError = document.querySelector('.nameerror');
         const emailError = document.querySelector('.emailerror');
         const passwordError = document.querySelector('.passworderror');
 
-            
+            nameError.textContent = '';
             emailError.textContent = '';
             passwordError.textContent = '';
 try{
-    const res = await fetch('/admin',{
+    const res = await fetch('/addadmin',{
             method:'POST',
-            body:JSON.stringify({email,password}),
+            body:JSON.stringify({fname,email,password}),
             headers:{'Content-Type':'application/json'}
            }).catch(e => console.log(e));
            const data = await res.json();
            if(data.errors){
+               nameError.textContent = data.errors.fname;
                emailError.textContent = data.errors.email;
                passwordError.textContent = data.errors.password;
 
@@ -59,4 +67,5 @@ try{
     console.log(err);
 }
 })      
+    
 </script>
