@@ -8,6 +8,7 @@ const {urlencoded } = require('express');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const noCache = require('nocache');
+const fileupload = require('express-fileupload');
 
 const mongoose  = require('mongoose');
 
@@ -22,6 +23,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(noCache());
+app.use(fileupload());
 
 
 //database connection

@@ -1,0 +1,80 @@
+</section>
+<div class="heading">
+    <h2>Products Details</h2>
+</div>
+
+<section class="tproduct">
+    <div class="productmenu">
+        <div class="menu-btn">
+            <div>
+                <a class="edit text-white" href="/addproduct">Add product</a>
+            </div>
+        </div>
+        
+        <div class="srch">
+            <input type="text" id="productsearch">
+            <button type="button" class="srchbtn">search</button>
+
+        </div>
+    </div>
+
+
+<!--Table-->
+<table class="table table-striped td">
+
+<!--Table head-->
+<thead>
+<tr>
+<th>Product Id</th>
+<th>Product Name</th>
+<th>Product Description</th>
+<th>Brand</th>
+<th>Qty</th>
+<th>Price</th>
+<th>
+    
+        <th>Shape</th>
+        <th>Frame type</th>
+        <th>Color</th>
+        <th>Gender</th>
+    
+
+</th>
+<th>Image</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<!--Table head-->
+
+<!--Table body-->
+<% products.forEach(function(product) { %>
+<tbody>
+<tr class="table-info">
+<th><%= product._id %></th>
+<td><%= product.productname %></td>
+<td><%= product.productdescription %></td>
+<td><%= product.brand %></td>
+<td><%= product.qty %></td>
+<td><%= product.price %></td>
+<td>
+    
+        <td><%= product.productcategory.shape %></td>
+        <td><%= product.productcategory.frametype %></td>
+        <td><%= product.productcategory.color %></td>
+        <td><%= product.productcategory.gender %></td>
+    
+    
+</td>
+<td><img src="/image/<%= product._id %>.jpeg" alt="" style="height: 70px;width: 70px;"></td>
+<td> <a class="btn btn-dark text-white" href="/editproduct/<%= product._id%>">Edit</a></td>
+<td> <a class="btn btn-danger text-white" href="/deleteproduct/<%= product._id%>">Delete</a></td>
+</tr>
+
+</tbody>
+<!--Table body-->
+<% } ) %>
+
+</table>
+<!--Table-->
+</section>

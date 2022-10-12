@@ -1,0 +1,22 @@
+<% if(locals.admin) { %>
+<div class="top-btns col-md-3">
+    <div>
+        <button class="logout btn-dark text-white"><a class="text-decoration-none text-white" href="/addadmin">Add admin</a></button>
+
+    </div>
+    <div>
+        <button class="logout btn-dark text-white"><a class="text-decoration-none text-white" href="/adminlogout">Log out</a></button>
+    </div>
+   
+    <div>
+        <button class="logout btn-danger text-white"><%= admin.fname %></button>
+    </div>
+   
+    <div>
+        <button class="logout btn-dark text-white " id="download-pdf">Download
+            pdf</button>
+
+    </div>
+
+</div>
+<% } %>

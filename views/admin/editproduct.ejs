@@ -1,0 +1,95 @@
+<div class="heading">
+    <h2>Edit Product</h2>
+</div>
+
+
+
+<section class="addproduct">
+    <!-- <% if(product) { %> -->
+    <div class="container col-md-6">
+        <form action="/addproduct" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Product Name</label>
+                <input type="text" class="form-control" name="productname" value="<%= product.productname %>">
+
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Product Description</label>
+                <input type="text" class="form-control" name="productdescription">
+
+            </div>
+
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Product Brand</label>
+                <input type="text" class="form-control" name="productbrand">
+            </div>
+             <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">PRICE</label>
+                <input type="text" class="form-control" name="price">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Product Quantity</label>
+                <input type="text" class="form-control" name="qty">
+
+            </div>
+            <!-- <div class="mb-3">
+                <label class="form-label">Product Category</label>
+
+            </div> -->
+            <div>
+                
+                    <h2>Product Category</h2>
+                
+                <div class="mb-3">
+                    <label class="form-label">Product shape</label>
+                    <select class="form-control" name="shape">
+                        <option value="oval">Oval</option>
+                        <option value="square">Square</option>
+                        <option value="aviator">Aviator</option>
+                        <option value="round">Round</option>
+                        <option value="cateye">Cat eye</option>
+                    </select>
+    
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Frame type</label>
+                    <select class="form-control" name="frametype">
+                        <option value="fullrim">Full rim</option>
+                        <option value="halfrim">Half rim</option>
+                        <option value="rimless">Rimless</option>
+                    </select>
+    
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Color</label>
+                    <select class="form-control" name="color">
+                        <option value="black">Black</option>
+                        <option value="blue">Blue</option>
+                        <option value="silver">Silver</option>
+                        <option value="red">Red</option>
+                        <option value="gunmetal">Gun Metal</option>
+                        <option value="yellow">Yellow</option>
+                    </select>
+    
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Gender</label>
+                    <select class="form-control" name="gender">
+                        <option value="men">Men</option>
+                        <option value="women">Women</option>
+                        <option value="unisex">Unisex</option>
+                    </select>
+    
+            </div>
+           
+            </div>
+            <div class="mb-3">
+                <label for="formFile" class="form-label">UPLOAD PRODUCT IMAGE</label>
+                <input class="form-control" type="file" id="formFile" name="image">
+            </div>
+
+            <button type="submit" class="btn btn-dark text-white mt-4 mb-4 btnlast">EDIT PRODUCT</button>
+        </form>
+    </div>
+    <!-- <% } %> -->
+</section>

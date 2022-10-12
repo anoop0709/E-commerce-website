@@ -1,0 +1,72 @@
+</section>
+<div class="heading">
+    <h2>User Details</h2>
+</div>
+
+<section class="tproduct">
+    <div class="productmenu">
+        <div class="menu-btn">
+            <!-- <div>
+                <a class="edit text-white" href="edituser.html">Edit</a>
+            </div>
+            <div>
+                
+            </div> -->
+           
+        </div>
+        
+        <div class="srch">
+            <input type="text" id="productsearch">
+            <button type="button" class="srchbtn">search</button>
+
+        </div>
+    </div>
+
+
+<!--Table-->
+<table class="table table-striped td">
+
+<!--Table head-->
+<thead>
+<tr>
+<th>User Id</th>
+<th>Verified status</th>
+<th>User Name</th>
+<th>Email</th>
+<th>Phone Number</th>
+<th>Address</th>
+<th>Is Blocked</th>
+<th></th>
+<th></th>
+
+</tr>
+</thead>
+<!--Table head-->
+
+<!--Table body-->
+<% users.forEach(function(user) { %>
+<tbody>
+<tr class="table-info" id="<%= user._id%>">
+<td scope="row"><%= user._id %></td>
+<td><%= user.isVerified %></td>
+<td><%= user.fname %></td>
+<td><%= user.email %></td>
+<td><%= user.phone %></td>
+<td><%= user.address %></td>
+<td><%= user.isBlocked %></td>
+<td><a class="del btn-danger text-white" href="/blockuser/<%= user._id%>">Block</a></td>
+<td><a class="del btn-dark text-white" href="/unblockuser/<%= user._id%>">UnBlock</a></td>
+</tr>
+
+</tbody>
+<!--Table body-->
+<% } ) %>
+
+</table>
+<!--Table-->
+</section>
+
+
+<script>
+   
+</script>

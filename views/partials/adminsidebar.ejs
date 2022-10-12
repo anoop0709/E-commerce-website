@@ -1,4 +1,4 @@
-<section id="menu-bar">
+<section id="menu-bar" class="">
     <div>
 
         <div class="menu col-md-2">
@@ -14,22 +14,22 @@
                 <div class="menu-list">
                     <div class="menu-item">
                         <i class="fa-solid fa-house"></i>
-                        <h6><a href="#" class="side-menu">Dashboard</a></h6>
+                        <h6><a href="/adminhome" class="side-menu">Dashboard</a></h6>
 
                     </div>
                     <div class="menu-item">
                         <i class="fa-solid fa-gear"></i>
-                        <h6><a href="products.html" class="side-menu">Products</a> </h6>
+                        <h6><a href="/productlist" class="side-menu">Products</a> </h6>
 
                     </div>
                     <div class="menu-item">
                         <i class="fa-solid fa-user-group"></i>
-                        <h6><a href="user.html" class="side-menu">User</a></h6>
+                        <h6><a href="/userlist" class="side-menu">User</a></h6>
 
                     </div>
                     <div class="menu-item">
                         <i class="fa-solid fa-plus"></i>
-                        <h6><a href="addproduct.html" class="side-menu">Add Product</a></h6>
+                        <h6><a href="/addproduct" class="side-menu">Add Product</a></h6>
 
                     </div>
                     <div class="menu-item">
@@ -59,3 +59,19 @@
 
 
 </section>
+
+<script>
+    let list = document.querySelectorAll(".side-menu");
+    for (let i = 0; i < list.length; i++) {
+        list[i].onclick = function () {
+            let j = 0;
+            while (j < list.length) {
+                list[j].classList.remove("active");
+                list[j].classList.add("side-menu");
+                j++;
+            }
+            list[i].classList.remove("side-menu")
+            list[i].classList.add("active")
+        }
+    }
+</script>
