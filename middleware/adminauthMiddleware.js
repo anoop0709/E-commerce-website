@@ -55,7 +55,7 @@ module.exports = {
             })
         }else{
             res.locals.admin = null;
-            res.redirect('/admin')
+            res.redirect('/admin');
         }
     }
 }

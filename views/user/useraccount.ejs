@@ -17,7 +17,7 @@
                    <a href="/orderhistory">Order History</a> 
                 </li>
                 <li class="list-group-item">
-                   <a href="/addaddress"> Add Address</a>
+                   <a href="/editprofile"> Edit profile</a>
                 </li>
                 <li class="list-group-item">
                    <a href="/mycart">My Cart</a> 
@@ -32,7 +32,7 @@
 
           </div>
        </div>
-   
+   <% if(user){ %>
 <div class="col-md-9">
     <div class="card mb-3">
       <div class="card-body">
@@ -41,7 +41,7 @@
             <h6 class="mb-0">Full Name</h6>
           </div>
           <div class="col-sm-9 text-secondary">
-            Kenneth Valdez
+            <%= user.fname %>
           </div>
         </div>
         <hr>
@@ -50,7 +50,7 @@
             <h6 class="mb-0">Email</h6>
           </div>
           <div class="col-sm-9 text-secondary">
-            fip@jukmuh.al
+            <%= user.email %>
           </div>
         </div>
         <hr>
@@ -59,7 +59,7 @@
             <h6 class="mb-0">Phone</h6>
           </div>
           <div class="col-sm-9 text-secondary">
-            (239) 816-9029
+            <%= user.phone %>
           </div>
         </div>
         <hr>
@@ -68,11 +68,16 @@
             <h6 class="mb-0">Address</h6>
           </div>
           <div class="col-sm-9 text-secondary">
-            Bay Area, San Francisco, CA
+            <% if(user.address){ %>
+              <%= user.address %>
+              <%} else { %>
+                <p>please add your address</p>
+                <% } %>
           </div>
         </div>
       </div>
     </div>
 </div>
+<% } %>
 </div>
 </div>

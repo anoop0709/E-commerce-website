@@ -127,9 +127,9 @@ body{
     color:#23aae3
 }
 #canvas {
-    position: relative;
+    position: absolute;
     top: 150px;
-    margin-left: 250px;
+    margin-left: 25%;
    
 }
 

@@ -37,7 +37,7 @@
 <th>Address</th>
 <th>Is Blocked</th>
 <th></th>
-<th></th>
+
 
 </tr>
 </thead>
@@ -54,8 +54,11 @@
 <td><%= user.phone %></td>
 <td><%= user.address %></td>
 <td><%= user.isBlocked %></td>
+<% if(user.isBlocked === false){ %>
 <td><a class="del btn-danger text-white" href="/blockuser/<%= user._id%>">Block</a></td>
+<% } else {%>
 <td><a class="del btn-dark text-white" href="/unblockuser/<%= user._id%>">UnBlock</a></td>
+<% } %>
 </tr>
 
 </tbody>

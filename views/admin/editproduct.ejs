@@ -1,3 +1,5 @@
+
+
 <div class="heading">
     <h2>Edit Product</h2>
 </div>
@@ -5,9 +7,9 @@
 
 
 <section class="addproduct">
-    <!-- <% if(product) { %> -->
+    <% if(locals.product) { %>
     <div class="container col-md-6">
-        <form action="/addproduct" method="post" enctype="multipart/form-data">
+        <form action="/editproduct/<%= product._id %>" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label class="form-label">Product Name</label>
                 <input type="text" class="form-control" name="productname" value="<%= product.productname %>">
@@ -15,21 +17,21 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Product Description</label>
-                <input type="text" class="form-control" name="productdescription">
+                <input type="text" class="form-control" name="productdescription" value="<%= product.productdescription %>">
 
             </div>
 
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">Product Brand</label>
-                <input type="text" class="form-control" name="productbrand">
+                <input type="text" class="form-control" name="productbrand" value="<%= product.brand %>">
             </div>
              <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">PRICE</label>
-                <input type="text" class="form-control" name="price">
+                <input type="text" class="form-control" name="price" value="<%= product.price %>">
             </div>
             <div class="mb-3">
                 <label class="form-label">Product Quantity</label>
-                <input type="text" class="form-control" name="qty">
+                <input type="text" class="form-control" name="qty" value="<%= product.qty %>">
 
             </div>
             <!-- <div class="mb-3">
@@ -42,7 +44,7 @@
                 
                 <div class="mb-3">
                     <label class="form-label">Product shape</label>
-                    <select class="form-control" name="shape">
+                    <select class="form-control" name="shape" value="<%= product.productcategory.shape %>">
                         <option value="oval">Oval</option>
                         <option value="square">Square</option>
                         <option value="aviator">Aviator</option>
@@ -53,7 +55,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Frame type</label>
-                    <select class="form-control" name="frametype">
+                    <select class="form-control" name="frametype" value="<%= product.productcategory.frametype %>">
                         <option value="fullrim">Full rim</option>
                         <option value="halfrim">Half rim</option>
                         <option value="rimless">Rimless</option>
@@ -62,7 +64,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Color</label>
-                    <select class="form-control" name="color">
+                    <select class="form-control" name="color" value="<%= product.productcategory.color %>">
                         <option value="black">Black</option>
                         <option value="blue">Blue</option>
                         <option value="silver">Silver</option>
@@ -74,22 +76,42 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Gender</label>
-                    <select class="form-control" name="gender">
+                    <select class="form-control" name="gender" value="<%= product.productcategory.gender %>">
                         <option value="men">Men</option>
                         <option value="women">Women</option>
                         <option value="unisex">Unisex</option>
                     </select>
     
-            </div>
+                </div>
+
+<div>
+    <label for=""></label>
+    <img src="/image/<%= product._id %>.jpeg" alt="" style="width:100px; height:auto" class="p-2"  id="imageItem">
+   <input type="file" class="form-control" name="image" onchange="viewImage(event)">
+
+</div>
            
-            </div>
+
+            <!-- <div>
+                <img src="/image/<%= product._id %>.jpeg"  style="height: 70px;width: 70px;"" alt="">
+            </div> -->
+           
+            <!-- </div>
             <div class="mb-3">
                 <label for="formFile" class="form-label">UPLOAD PRODUCT IMAGE</label>
                 <input class="form-control" type="file" id="formFile" name="image">
-            </div>
+            </div> -->
 
-            <button type="submit" class="btn btn-dark text-white mt-4 mb-4 btnlast">EDIT PRODUCT</button>
+            <button type="submit" class="btn btn-dark text-white mt-4 mb-4 btnlast">UPDATE PRODUCT</button>
         </form>
     </div>
-    <!-- <% } %> -->
+    <% } %>
 </section>
+
+
+<script>
+    function viewImage(event){
+    document.getElementById('imageItem').src = URL.createObjectURL(event.target.files[0]);
+    }
+
+</script>

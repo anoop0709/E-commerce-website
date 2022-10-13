@@ -3,6 +3,7 @@ const User = require('../model/userschema');
 const Product = require('../model/productschema')
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const fs = require('fs');
 
 //signup error handling
 const handleErrors = (err)=>{
@@ -152,7 +153,37 @@ module.exports = {
         let proId = req.params.id;
         let product = await Product.findOne({_id: proId});
         console.log(product);
-        res.render('./admin/editproduct',{layout:'adminlayout',product})
+        res.render('./admin/editproduct',{product,layout:'adminlayout'})
+    },
+    update_product: async(req,res)=>{
+        let proid = req.params.id;
+        const productname = req.body.productname;
+        const productdescription = req.body.productdescription;
+        const brand = req.body.productbrand;
+        const price = req.body.price;
+        const qty = req.body.qty;
+        const productcategory = {
+            shape:req.body.shape,
+            frametype:req.body.frametype,
+            color:req.body.color,
+            gender:req.body.gender
+        }
+        console.log(proid);
+        let product = await Product.findOneAndUpdate({_id:proid},{productname,productdescription,brand,price,qty,productcategory})
+        res.redirect('/productlist');
+        
+    },
+    delete_product:async (req,res)=>{
+
+    let proid = req.params.id;
+   let deletedproduct =  await Product.findByIdAndDelete({_id:proid});
+    res.redirect('/productlist');
+    fs.unlink("./public/image/" + proid +".jpeg",(err)=>{
+        console.log(err);
+    })
+
+
+
     }
 
 

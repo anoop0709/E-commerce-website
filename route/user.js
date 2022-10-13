@@ -15,7 +15,9 @@ router.post('/verify-otp',userhelper.otpVerification);
 router.get('/login',authMiddleware.checkAuth,authMiddleware.checkUser,userhelper.getlogin);
 router.post('/login',userhelper.doLogin);
 router.get('/logout',userhelper.getlogout);
-router.get('/useraccount',userhelper.userAccount);
+router.get('/useraccount/:id',authMiddleware.checkUser,userhelper.userAccount);
+router.get('/passwordreset',authMiddleware.checkUser,userhelper.reset_password);
+router.post('/passwordreset/:id',authMiddleware.checkUser,userhelper.reset_password_post);
 
 
 

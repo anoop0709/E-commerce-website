@@ -6,6 +6,7 @@ const account_SID = process.env.account_SID;
 const auth_token = process.env.auth_Token;
 const service_Id = process.env.service_ID;
 const client = require('twilio')(account_SID,auth_token);
+const objectId = require('mongodb').ObjectId
 
 
 const handleErrors = (err)=>{
@@ -145,7 +146,22 @@ module.exports = {
         res.redirect('/');
 
     },
-    userAccount:(req,res)=>{
-        res.render('./user/useraccount',{layout:"layout"})
+    userAccount:async (req,res)=>{
+        const userId = req.params.id;
+        console.log(userId);
+        const user = await User.findOne({_id:userId});
+        res.render('./user/useraccount',{layout:"layout",user});
+    },
+    reset_password:(req,res)=>{
+        res.render('./user/passwordreset',{layout:'layout'});
+
+    },
+    reset_password_post:(req,res)=>{
+        let id = req.params.id
+        let password = req.body;
+
+        console.log(password);
+       
+
     }
 }

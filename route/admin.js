@@ -22,6 +22,8 @@ router.get('/productlist',authMiddleware.checkAdmin,productHelper.getProductlist
 router.get('/addproduct',authMiddleware.checkAdmin,adminHelper.get_product_page);
 router.post('/addproduct',authMiddleware.checkAdmin,adminHelper.add_product);
 router.get('/editproduct/:id',authMiddleware.checkAdmin,adminHelper.edit_product);
+router.post('/editproduct/:id',authMiddleware.checkAdmin,adminHelper.update_product);
+router.get('/deleteproduct/:id',authMiddleware.checkAdmin,adminHelper.delete_product)
 
 
 

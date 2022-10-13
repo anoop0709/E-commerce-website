@@ -20,7 +20,7 @@
 
 
 <!--Table-->
-<table class="table table-striped td">
+<table class="table table-striped td table align-middle">
 
 <!--Table head-->
 <thead>
@@ -50,7 +50,7 @@
 <!--Table body-->
 <% products.forEach(function(product) { %>
 <tbody>
-<tr class="table-info">
+<tr class="table-info ">
 <th><%= product._id %></th>
 <td><%= product.productname %></td>
 <td><%= product.productdescription %></td>
@@ -68,7 +68,34 @@
 </td>
 <td><img src="/image/<%= product._id %>.jpeg" alt="" style="height: 70px;width: 70px;"></td>
 <td> <a class="btn btn-dark text-white" href="/editproduct/<%= product._id%>">Edit</a></td>
-<td> <a class="btn btn-danger text-white" href="/deleteproduct/<%= product._id%>">Delete</a></td>
+<!-- <td> <a class="btn btn-danger text-white" href="/deleteproduct/<%= product._id%>">Delete</a></td> -->
+<td><button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#productdelete<%= product._id %>">
+    DELETE
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="productdelete<%= product._id %>" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">DELETE</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Do you want to delete the the Product ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark text-white"
+                    data-bs-dismiss="modal">CLOSE</button>
+                
+                    <button type="button" class="btn btn-danger text-white"><a href="/deleteproduct/<%= product._id %>" class="text-decoration-none text-white"> DELETE</a> </button>
+               
+            </div>
+        </div>
+    </div>
+</div></td>
 </tr>
 
 </tbody>
