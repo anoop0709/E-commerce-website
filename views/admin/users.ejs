@@ -24,7 +24,7 @@
 
 
 <!--Table-->
-<table class="table table-striped td">
+<table class="table table-striped td table align-middle">
 
 <!--Table head-->
 <thead>
@@ -44,7 +44,7 @@
 <!--Table head-->
 
 <!--Table body-->
-<% users.forEach(function(user) { %>
+<% users.forEach((user) => { %>
 <tbody>
 <tr class="table-info" id="<%= user._id%>">
 <td scope="row"><%= user._id %></td>
@@ -52,11 +52,27 @@
 <td><%= user.fname %></td>
 <td><%= user.email %></td>
 <td><%= user.phone %></td>
-<td><%= user.address %></td>
+<td><div class="dropdown">
+    <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+      Address
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      <li class="dropdown-item"> <% user.address.forEach(address => { %>
+        <p class="mt-0 mb-0"><%= address.housename %></p>
+        <p  class="mt-0 mb-0"><%= address.streetname %></p>
+        <p class="mt-0 mb-0"><%= address.city %></p>
+        <p class="mt-0 mb-0"><%= address.state %></p>
+        <p class="mt-0 mb-0"><%= address.pincode %></p>
+        <hr>
+        <% } ) %></li>
+    </ul>
+  </div>
+   
+</td>
 <td><%= user.isBlocked %></td>
 <% if(user.isBlocked === false){ %>
 <td><a class="del btn-danger text-white" href="/blockuser/<%= user._id%>">Block</a></td>
-<% } else {%>
+<% } else { %>
 <td><a class="del btn-dark text-white" href="/unblockuser/<%= user._id%>">UnBlock</a></td>
 <% } %>
 </tr>

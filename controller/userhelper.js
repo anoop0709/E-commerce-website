@@ -6,7 +6,8 @@ const account_SID = process.env.account_SID;
 const auth_token = process.env.auth_Token;
 const service_Id = process.env.service_ID;
 const client = require('twilio')(account_SID,auth_token);
-const objectId = require('mongodb').ObjectId
+const objectId = require('mongodb').ObjectId;
+const bcrypt = require('bcrypt');
 
 
 const handleErrors = (err)=>{
@@ -150,18 +151,85 @@ module.exports = {
         const userId = req.params.id;
         console.log(userId);
         const user = await User.findOne({_id:userId});
+        console.log(user.address);
         res.render('./user/useraccount',{layout:"layout",user});
     },
     reset_password:(req,res)=>{
         res.render('./user/passwordreset',{layout:'layout'});
 
     },
-    reset_password_post:(req,res)=>{
-        let id = req.params.id
-        let password = req.body;
+    reset_password_post:async (req,res)=>{
+        //let userid = req.params.id;
+        let {oldpassword,newpassword,userid}= req.body;
 
-        console.log(password);
+        console.log(oldpassword,newpassword,userid);
+
+        let user = await User.findOne({_id:userid});
+        console.log(user);
+        if(user){
+            try{
+                let userpassword = await bcrypt.compare(oldpassword,user.password);
+                if(userpassword){
+                    console.log(userpassword);
+                    const salt = await bcrypt.genSalt();
+                     let Newpassword = await bcrypt.hash(newpassword,salt);
+                    console.log(Newpassword);
+                  let user =   await User.updateOne({_id:userid},{password:Newpassword})
+                  console.log(user);
+                    res.json({user});
+                }else{
+                    res.json({message:'password entered wrong'})
+                    console.log('password entered wrong');
+                }
+            }catch(err){
+                console.log(err);
+            }
+           
+        }
        
 
+    },
+    edit_profile:(req,res)=>{
+        res.render('./user/usereditprofile',{layout:'layout'})
+    },
+    edit_profile_post:async (req,res)=>{
+        let userId = req.params.id;
+        let name = req.body.fname;
+        let email = req.body.email;
+        let phone = req.body.phone;
+        let address = {
+            housename:req.body.housename,
+            street:req.body.streetname,
+            city:req.body.city,
+            state:req.body.state,
+            pincode:req.body.pincode
+        }
+
+        console.log(userId,name,email,phone,address);
+        try{
+            let user = await User.findOneAndUpdate({_id:userId},{$set:{fname:name,email:email,phone:phone,address:address}});
+            res.redirect('/useraccount/'+ userId);
+        }catch(err){
+            console.log(err);
+        }
+    },
+    add_address:async (req,res)=>{
+        res.render('./user/addaddress',{layout:'layout'})
+    },
+    add_address_post:async (req,res)=>{
+        console.log(req.body);
+        let userId = req.params.id;
+        let address = {
+            housename:req.body.housename,
+            street:req.body.streetname,
+            city:req.body.city,
+            state:req.body.state,
+            pincode:req.body.pincode
+
+        }
+        let user = await User.findOneAndUpdate({_id:userId},{$push:{address:address}});
+        res.redirect('/useraccount/'+ userId);
     }
+   
+
 }

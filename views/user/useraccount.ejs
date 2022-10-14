@@ -1,6 +1,6 @@
 <div class="container mt-5 mb-5 p-5" style="background-color: rgb(60, 61, 57);">
     <div class="row gutters-sm">
-        <div class="col-md-3 mb-3">
+        <div class="col-md-3">
           <div class="card mb-3">
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
@@ -10,23 +10,23 @@
           </div>
           <div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                  <a href="/passwordreset" class="link-danger"> Change Password</a> 
+                <li class="list-group-item mb-1 b-1">
+                  <a class="text-dark" href="/passwordreset" class="link-danger"> Change Password</a> 
                 </li>
-                <li class="list-group-item">
-                   <a href="/orderhistory">Order History</a> 
+                <li class="list-group-item mb-1">
+                   <a class="text-dark" href="/orderhistory">Order History</a> 
                 </li>
-                <li class="list-group-item">
-                   <a href="/editprofile"> Edit profile</a>
+                <li class="list-group-item mb-1">
+                   <a class="text-dark" href="/userprofileedit/<%= user._id %>"> Edit profile</a>
                 </li>
-                <li class="list-group-item">
-                   <a href="/mycart">My Cart</a> 
+                <li class="list-group-item mb-1">
+                   <a class="text-dark" href="/mycart">My Cart</a> 
                 </li>
-                <li class="list-group-item">
-                   <a href="/wishlist">Wishlist</a> 
+                <li class="list-group-item mb-1">
+                   <a class="text-dark" href="/wishlist">Wishlist</a> 
                 </li>
-                <li class="list-group-item">
-                    <a href="/logout">Logout</a> 
+                <li class="list-group-item mb-1">
+                    <a class="text-dark" href="/logout">Logout</a> 
                 </li>
               </ul>
 
@@ -68,15 +68,30 @@
             <h6 class="mb-0">Address</h6>
           </div>
           <div class="col-sm-9 text-secondary">
+
             <% if(user.address){ %>
-              <%= user.address %>
+              <% user.address.forEach((address)=>{ %>
+              <p class="mt-0 mb-0"><%= address.housename %></p>
+              <p  class="mt-0 mb-0"><%= address.streetname %></p>
+              <p class="mt-0 mb-0"><%= address.city %></p>
+              <p class="mt-0 mb-0"><%= address.state %></p>
+              <p class="mt-0 mb-0"><%= address.pincode %></p>
+              <hr>
+              <% }) %>
               <%} else { %>
                 <p>please add your address</p>
                 <% } %>
+               
           </div>
+         
         </div>
+        <div class="text-right">
+          <button class="btn btn-danger"><a href="/addaddress" class="text-white">Add address</a></button>
+        </div>
+        
       </div>
     </div>
+    
 </div>
 <% } %>
 </div>
