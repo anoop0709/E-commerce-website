@@ -71,18 +71,52 @@
 
             <% if(user.address){ %>
               <% user.address.forEach((address)=>{ %>
+                 
               <p class="mt-0 mb-0"><%= address.housename %></p>
-              <p  class="mt-0 mb-0"><%= address.streetname %></p>
+              <p  class="mt-0 mb-0"><%= address.street %></p>
               <p class="mt-0 mb-0"><%= address.city %></p>
               <p class="mt-0 mb-0"><%= address.state %></p>
               <p class="mt-0 mb-0"><%= address.pincode %></p>
+              
+              <div class="text-right">
+                <button class=" text-right btn btn-danger"><a href="/addressedit/<%= user._id %>/<%= address.unique %>" class="text-white text-right"><i class="fa-solid fa-pen"></i></a></button>
+                <button class="text-white  text-right btn btn-danger" type="button" data-toggle="modal" data-target="#addressdelete<%= address.unique %>"><i class="fa-solid fa-trash-can"></i></button>
+                
+                <div class="modal fade" id="addressdelete<%= address.unique %>" tabindex="-1" aria-labelledby="exampleModalLabel"
+                  aria-hidden="true">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">DELETE</h5>
+                              <button type="button" class="btn btn-danger" data-dismiss="modal"
+                                  aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                          </div>
+                          <div class="modal-body">
+                              Do you want to delete the the Address ?
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-dark text-white"
+                                  data-dismiss="modal">CLOSE</button>
+                              
+                                  <button type="button" class="btn btn-danger text-white"><a href="/addressdelete/<%= user._id %>/<%= address.unique %>" class="text-decoration-none text-white"> DELETE</a> </button>
+                             
+                          </div>
+                      </div>
+                  </div>
+                </div>
+                
+              </div>
+             
               <hr>
               <% }) %>
+              
+             
               <%} else { %>
                 <p>please add your address</p>
                 <% } %>
                
           </div>
+          
          
         </div>
         <div class="text-right">
@@ -96,3 +130,4 @@
 <% } %>
 </div>
 </div>
+

@@ -27,13 +27,14 @@
     "express": "^4.18.1",
     "express-ejs-layouts": "^2.5.1",
     "express-fileupload": "^1.4.0",
-    "fileupload": "^1.0.0",
+    "fileupload": "^0.2.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.5",
     "nocache": "^3.0.4",
     "nodemon": "^2.0.20",
     "twilio": "^3.82.2",
     "urlencode": "^1.1.0",
+    "uuid": "^9.0.0",
     "validator": "^13.7.0"
   }
 }

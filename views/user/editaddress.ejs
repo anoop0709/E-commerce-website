@@ -1,0 +1,26 @@
+<div class="container w-100 mb-5">
+    <div class="wrap mx-auto">
+        <form id="signup" class="col-md-6 px-5 mx-auto" method="post" action="/addressedit/<%= user._id %>/<%= address.unique %>">
+        <div class="form-group">
+           
+            <label class="mb-2">House name or number</label>
+            <input type="text" class="form-control" id="hname" name="housename" placeholder="" value="<%= address.housename %>">
+
+            <label class="mb-2">Street name</label>
+            <input type="text" class="form-control" id="strname" name="streetname" placeholder="" value="<%= address.street %>" >
+            <label class="mb-2">City</label>
+            <input type="text" class="form-control" id="city" name="city" placeholder="" value="<%= address.city %>" >
+            <label class="mb-2">State</label>
+            <input type="text" class="form-control" id="state" name="state" placeholder="" value="<%= address.state %>" >
+            <label class="mb-2">Pincode</label>
+            <input type="text" class="form-control" id="pincode" name="pincode" placeholder="" value="<%= address.pincode %>">
+           
+            
+        </div>
+        <div class="text-right mt-5">
+            <button id="subbtn" class="btn btn-dark  mb-4 text-white"> update </button>
+        </div>
+        </form>
+        </div>
+</div>
+

@@ -31,6 +31,7 @@
 <th>Brand</th>
 <th>Qty</th>
 <th>Price</th>
+<th>Is Featured</th>
 <th>
     
         <th>Shape</th>
@@ -57,6 +58,7 @@
 <td><%= product.brand %></td>
 <td><%= product.qty %></td>
 <td><%= product.price %></td>
+<td><%= product.isFeatured %></td>
 <td>
     
         <td><%= product.productcategory.shape %></td>
@@ -95,7 +97,9 @@
             </div>
         </div>
     </div>
-</div></td>
+</div>
+<!-- Modal -->
+</td>
 </tr>
 
 </tbody>

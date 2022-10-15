@@ -25,14 +25,16 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    image:{
-        type:Array,
-        required:true
+    isFetured:{
+        type:Boolean,
+        required:true,
+        default:false,
     },
     productcategory:{
         type:Object,
        required:true
 }
+
 })
 
 const Product = mongoose.model('product',productSchema);

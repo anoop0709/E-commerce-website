@@ -33,6 +33,10 @@ router.post('/passwordreset',authMiddleware.checkUser,userhelper.reset_password_
 router.get('/userprofileedit/:id',authMiddleware.checkUser,userhelper.edit_profile);
 router.post('/userprofileedit/:id',authMiddleware.checkUser,userhelper.edit_profile_post)
 
+router.get('/addressedit/:id/:address',authMiddleware.checkUser,userhelper.edit_address);
+router.post('/addressedit/:id/:address',authMiddleware.checkUser,userhelper.edit_address_post);
+
+router.get('/addressdelete/:id/:address',authMiddleware.checkUser,userhelper.delete_address)
 
 
 

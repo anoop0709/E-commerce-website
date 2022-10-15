@@ -8,6 +8,8 @@ const service_Id = process.env.service_ID;
 const client = require('twilio')(account_SID,auth_token);
 const objectId = require('mongodb').ObjectId;
 const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid');
+const { db } = require('../model/userschema');
 
 
 const handleErrors = (err)=>{
@@ -149,9 +151,11 @@ module.exports = {
     },
     userAccount:async (req,res)=>{
         const userId = req.params.id;
-        console.log(userId);
+        
+       // console.log(userId);
         const user = await User.findOne({_id:userId});
-        console.log(user.address);
+      
+        //console.log(user.address);
         res.render('./user/useraccount',{layout:"layout",user});
     },
     reset_password:(req,res)=>{
@@ -219,7 +223,9 @@ module.exports = {
     add_address_post:async (req,res)=>{
         console.log(req.body);
         let userId = req.params.id;
+        console.log(uuidv4());
         let address = {
+            unique: uuidv4(),
             housename:req.body.housename,
             street:req.body.streetname,
             city:req.body.city,
@@ -229,6 +235,39 @@ module.exports = {
         }
         let user = await User.findOneAndUpdate({_id:userId},{$push:{address:address}});
         res.redirect('/useraccount/'+ userId);
+    },
+    delete_address:async (req,res)=>{
+        let userid = req.params.id;
+        let addressid = req.params.address;
+
+        await User.findOneAndUpdate({},{$pull:{address:{$elemMatch:{unique:{$eq:addressid}}}}});
+        res.redirect('/useraccount/'+ userid);
+
+    },
+    edit_address:async (req,res)=>{
+        let userId = req.params.id;
+        const addressid = req.params.address;
+        let matchingaddress = await User.find({_id:userId},{address:{$elemMatch:{unique:{$eq:addressid}}}});
+        let addressarr = matchingaddress[0];
+        let address = addressarr.address[0]
+        res.render('./user/editaddress',{layout:'layout',address,userId})
+
+    },
+    edit_address_post:async (req,res)=>{
+        let userid = req.params.id;
+        let addressid = req.params.address;
+        let address = req.body;
+        let housename = req.body.housename;
+        let street = req.body.streetname;
+        let city = req.body.city;
+        let state = req.body.state;
+        let pincode = req.body.pincode;
+        console.log(address);
+        let matchingaddress = await User.find({_id:userid},{address:{$elemMatch:{unique:{$eq:addressid}}}});
+        let addressarr = matchingaddress[0];
+        let addressfind = addressarr.address[0]
+        let addressupdate = await User.findOneAndUpdate({address:{$elemMatch:{unique:{$eq:addressid}}}},{'$set':{'address.$.housename':housename,'address.$.street':street,'address.$.city':city,'address.$.state':state,'address.$.pincode':pincode}});
+        res.redirect('/useraccount/'+ userid);
     }
    
 
