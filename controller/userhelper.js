@@ -1,4 +1,5 @@
 const User = require('../model/userschema');
+const Product = require('../model/productschema');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middleware/userauthMiddleware')
 require('dotenv').config();
@@ -240,7 +241,7 @@ module.exports = {
         let userid = req.params.id;
         let addressid = req.params.address;
 
-        await User.findOneAndUpdate({},{$pull:{address:{$elemMatch:{unique:{$eq:addressid}}}}});
+        await User.findByIdAndUpdate({_id:userid},{$pull:{address:{unique:addressid}}})
         res.redirect('/useraccount/'+ userid);
 
     },
@@ -268,6 +269,74 @@ module.exports = {
         let addressfind = addressarr.address[0]
         let addressupdate = await User.findOneAndUpdate({address:{$elemMatch:{unique:{$eq:addressid}}}},{'$set':{'address.$.housename':housename,'address.$.street':street,'address.$.city':city,'address.$.state':state,'address.$.pincode':pincode}});
         res.redirect('/useraccount/'+ userid);
+    },
+
+    get_shop_page:async (req,res)=>{
+        let products = await Product.find({});
+
+        res.render('./user/shop',{layout:'layout',products})
+
+    },
+    single_view:async (req,res)=>{
+        let productid = req.params.id;
+        let productdetails = await Product.findOne({_id:productid});
+        let Allproducts = await Product.find({}).lean();
+        // console.log(productdetails);
+        
+        res.render('./user/singlepageview',{layout:'layout',productdetails,Allproducts})
+    },
+
+    cart_page:async (req,res)=>{
+        let userid = req.params.id;
+        let user = await User.findOne({_id:userid});
+        let cartitems = user.cart;
+        
+        console.log(cartitems);
+        let productid = user.cart.map((el)=>{
+            return el.product;
+        })
+        
+        let items =  await Product.findById({_id:productid}).lean();
+        console.log(items);
+        // let productsitems = items.map((el)=>{
+          
+        //    return ;
+        // })
+        //console.log(productsitems);
+        console.log(productid);
+        res.render('./user/cart',{layout:'layout',cartitems,items})
+    },
+    add_to_cart:async (req,res)=>{
+        let productid = req.body.productid;
+        let userid = req.body.userid;
+        //let product = await Product.findOne({_id:productid});
+        let cartproduct = {
+            qty : Number(req.body.qtyinp) ,
+            product: productid
+         }
+       
+        let user = await User.findOne({_id:userid});
+        let proExist = user.cart.filter((el) => {
+            return el.product === productid;
+        })
+        if(proExist.length >= 1){
+         let newcRT = user.cart.map((el) => {
+             if (el.product == productid) {
+                 el.qty++;
+             }
+             return el
+         })
+
+         await User.findByIdAndUpdate({_id:userid},{$set:{cart:newcRT}});
+
+          user.cart = newcRT
+
+        }else{
+            user.cart.push(cartproduct)
+        }
+       
+        await user.save();
+       res.json({user});
     }
    
 

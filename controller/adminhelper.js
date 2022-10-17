@@ -132,13 +132,15 @@ module.exports = {
         const brand = req.body.productbrand;
         const price = req.body.price;
         const qty = req.body.qty;
+        const isfeatured = req.body.isfeatured
         const productcategory = {
             shape:req.body.shape,
             frametype:req.body.frametype,
             color:req.body.color,
             gender:req.body.gender
         }
-        console.log(productname,productdescription,brand,price,qty,productcategory);
+        console.log(req.body.frametype);
+        console.log(productname,productdescription,brand,price,qty,isfeatured,productcategory);
        let product =  await Product.create({productname,productdescription,brand,price,qty,productcategory})
        try{
         let image = req.files.image;

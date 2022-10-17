@@ -1,0 +1,67 @@
+
+
+
+
+<div class="card mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-8 cart">
+            <div class="title">
+                <div class="row text-center">
+                    <div class="col "><h4><b>Shopping Cart</b></h4></div>
+                    <div class="col align-self-center text-right text-muted"></div>
+                </div>
+            </div>    
+            <% cartitems.forEach((cartitem)=>{%>
+            <div class="row border-top border-bottom mx-2">
+                <div class="row main align-items-center">
+                    <div class="col-2"><img class="img-fluid" src="/image/<%= cartitem.product %>.jpeg"></div>
+                    <div class="col">
+                        <div class="row"><%= items.brand %></div>
+                        <!-- <div class="row"><%= items.productdescription %></div> -->
+                    </div>
+                    <div class="col">
+                        <a href="#" onclick="minus()" class="mx-2">-</a><a href="#" id="qtyvalue" class="border"><%= cartitem.qty %></a><a class="mx-2" href="#" onclick="plus()">+</a>
+                    </div>
+                    <div class="col">&euro;<%= items.price %>.00 <a href="#" class="close">&#10005;</a></div>
+                </div>
+            </div>
+            <% }) %>
+
+            <div class="back-to-shop"><a href="#">&leftarrow;</a><span class="text-muted">Back to shop</span></div>
+        </div>
+        <div class="col-md-4 summary">
+            <div class="text-center"><h5><b>Summary</b></h5></div>
+            <hr>
+            <div class="row mx-2">
+                <div class="col" style="padding-left:0;">ITEMS 3</div>
+                <div class="col text-right">&euro; 132.00</div>
+            </div>
+            <form>
+                <p>GIVE CODE</p>
+                <input id="code" placeholder="Enter your code">
+            </form>
+            <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                <div class="col">TOTAL PRICE</div>
+                <div class="col text-right">&euro; 137.00</div>
+            </div>
+            <button class="btn">CHECKOUT</button>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+var count = 1;
+var countEl = document.getElementById("qtyvalue");
+function plus() {
+    count++;
+    countEl.innerHTML= count;
+}
+function minus() {
+    if (count > 1) {
+        count--;
+        countEl.innerHTML = count;
+    }
+}
+
+</script>

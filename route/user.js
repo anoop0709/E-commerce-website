@@ -6,9 +6,11 @@ const authMiddleware = require('../middleware/userauthMiddleware');
 
 
 
-
+//homepage -->
 router.get('/',authMiddleware.checkUser,userhelper.homePage,authMiddleware.checkAuth);
+//homepage -->
 
+//user login and signup -->
 router.get('/signup',authMiddleware.checkAuth,authMiddleware.checkUser,userhelper.getsignUp)
 router.post('/signup',userhelper.dosignup);
 
@@ -21,7 +23,10 @@ router.get('/login',authMiddleware.checkAuth,authMiddleware.checkUser,userhelper
 router.post('/login',userhelper.doLogin);
 
 router.get('/logout',userhelper.getlogout);
+//user login and signup ---->
 
+
+//user account routes--->
 router.get('/useraccount/:id',authMiddleware.checkUser,userhelper.userAccount);
 
 router.get('/addaddress',authMiddleware.checkUser,userhelper.add_address);
@@ -36,9 +41,20 @@ router.post('/userprofileedit/:id',authMiddleware.checkUser,userhelper.edit_prof
 router.get('/addressedit/:id/:address',authMiddleware.checkUser,userhelper.edit_address);
 router.post('/addressedit/:id/:address',authMiddleware.checkUser,userhelper.edit_address_post);
 
-router.get('/addressdelete/:id/:address',authMiddleware.checkUser,userhelper.delete_address)
+router.get('/addressdelete/:id/:address',authMiddleware.checkUser,userhelper.delete_address);
+
+//user account routes--->
+
+//shop page-->
+router.get('/shop',authMiddleware.checkUser,userhelper.get_shop_page);
 
 
+//single page view-->
+router.get('/singlepage/:id',authMiddleware.checkUser,userhelper.single_view);
 
+//cart page
+
+router.get('/cart/:id',authMiddleware.checkUser,userhelper.cart_page);
+router.post('/cart',authMiddleware.checkUser,userhelper.add_to_cart);
 
 module.exports = router;

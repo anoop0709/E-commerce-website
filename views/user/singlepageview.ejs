@@ -1,0 +1,257 @@
+<section class="banner-bottom-wthreelayouts py-lg-5 py-3 col-lg-12">
+    <div class="container">
+        <div class="inner-sec-shop pt-lg-4 pt-3">
+            <div class="row">
+                <div class="col-lg-4 single-right-left ">
+                    <div class="grid images_3_of_2">
+                        <div class="flexslider1">
+
+                            <ul class="slides">
+                                <li style="list-style: none;">
+                                    <div class="thumb-image border"> <img src="../image/<%= productdetails._id %>.jpeg"
+                                            data-imagezoom="true" class="img-fluid" alt=" "> </div>
+                                </li>
+
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8 single-right-left simpleCart_shelfItem">
+                    <h3>
+                        <%= productdetails.productname%>
+                    </h3>
+
+                    <p>
+                        <%= productdetails.productdescription%>
+                    </p>
+                    <h5>
+                        <%= productdetails.brand%>
+                    </h5>
+                    <p><span class="item_price">$<%= productdetails.price%>.00</span>
+                    </p>
+                    <div class="rating1">
+                        <ul class="stars">
+                            <li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="color-quality">
+                        <div class="color-quality-right">
+                            <h5>Quantity</h5>
+                            <button class="cart-item-count btn btn-primary " id="minusbtn" onclick="minus()">-</button>
+                            <input id="qtyinp" class="mx-2 text-center" value="1">
+                            <button class="cart-item-count btn btn-primary" id="plusbtn" onclick="plus()">+</button>
+                        </div>
+                    </div>
+                    <div class="clearfix"> </div>
+                    <div class="mt-5">
+                        <div>
+                            <div>
+                                <!-- Button HTML (to Trigger Modal) -->
+                                <a href="#myModal1" class="btn btn-danger" data-toggle="modal" id="addtocart">add to cart</a>
+                            </div>
+                            <div id="myModal1" class="modal fade">
+                                <div class="modal-dialog modal-confirm">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="icon-box">
+                                                <i class="material-icons">&#xE876;</i>
+                                            </div>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="text-center responsetext"></p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-success btn-block" data-dismiss="modal">OK</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+            
+                                <div class="d-none" ><input type="text" id="user" value="<%= user._id %>"></div>
+                                <div class="d-none" ><input type="text" id="product" value="<%= productdetails._id %>"></div>
+                            
+                            </div>
+                    </div>
+                    <ul class="footer-social text-left mt-lg-4 mt-3">
+                        <li>Share On : </li>
+                        <li class="mx-2">
+                            <a href="#">
+                                <span class="fab fa-facebook-f"></span>
+                            </a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="#">
+                                <span class="fab fa-twitter"></span>
+                            </a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="#">
+                                <span class="fab fa-google-plus-g"></span>
+                            </a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="#">
+                                <span class="fab fa-linkedin-in"></span>
+                            </a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="#">
+                                <span class="fas fa-rss"></span>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+                <div class="clearfix"> </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container text-center mx-auto col-lg-12">
+        <!--/slide-->
+        <div class="slider-img mt-lg-5 mt-2 px-lg-2 px-3">
+            <!--//banner-sec-->
+            <h3 class="tittle-w3layouts text-left my-lg-4 my-3 text-center">Featured Products</h3>
+            <div class="mid-slider col-lg-12">
+                <div class="owl-carousel owl-theme row col-lg-12">
+                    <% Allproducts.forEach((product)=>{ %>
+                    <div class="item border mx-0 my-3 col-lg-3">
+                        <div class="gd-box-info text-center">
+                            <div class="product-men women_two bot-gd">
+                                <div class="product-googles-info slide-img googles">
+                                    <div class="men-pro-item">
+                                        <div class="men-thumb-item">
+                                            <img src="../image/<%= product._id%>.jpeg" class="border" alt="">
+                                            <div class="men-cart-pro">
+                                                <div class="inner-men-cart-pro">
+                                                    <a href="/singlepage/<%= product._id %>" class="link-product-add-cart">Quick View</a>
+                                                </div>
+                                            </div>
+                                            <span class="product-new-top color-danger">New</span>
+                                        </div>
+                                        <div class="item-info-product">
+
+                                            <div class="info-product-price">
+                                                <div class="grid_meta">
+                                                    <div class="product_price">
+                                                        <h4>
+                                                            <a href="/singlepage/<%= product._id %>"><%= product.brand%> </a>
+                                                        </h4>
+                                                        <div class="grid-price mt-2">
+                                                            <span class="money ">$<%= product.price%></span>
+                                                        </div>
+                                                    </div>
+                                                    <ul class="stars">
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-star-half-o" aria-hidden="true"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="googles single-item hvr-outline-out">
+                                                    <form action="/cart/:<%= product._id %>" method="post">
+                                                        <input type="hidden" name="cmd" value="_cart">
+                                                        <input type="hidden" name="add" value="1">
+                                                        <input type="hidden" name="googles_item"
+                                                            value="Royal Son Aviator">
+                                                        <input type="hidden" name="amount" value="425.00">
+                                                        <button type="submit" class="googles-cart pgoogles-cart">
+                                                            <i class="fas fa-cart-plus"></i>
+                                                        </button>
+
+
+                                                    </form>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+        <!--//slider-->
+    </div>
+</section>
+<!--footer -->
+<style>
+    #qtyinp {
+        width: 50px;
+
+    }
+</style>
+
+<script>
+
+
+    var count = 1;
+    var countEl = document.getElementById("qtyinp");
+    function plus() {
+        count++;
+        countEl.value = count;
+    }
+    function minus() {
+        if (count > 1) {
+            count--;
+            countEl.value = count;
+        }
+    }
+
+
+let addtocartbtn = document.querySelector('#addtocart');
+let userid = document.querySelector('#user').value;
+let productid = document.querySelector('#product').value;
+let qtyinp =document.querySelector('#qtyinp').value;
+addtocartbtn.addEventListener('click',async (e)=>{
+    e.preventDefault();
+   let response = await fetch('/cart',{
+        method:'POST',
+        body:JSON.stringify({productid,userid,qtyinp}),
+        headers: { 'Content-Type': 'application/json' }
+    })
+let check = await response.json();
+if(check){
+    let responseText = document.querySelector('.responsetext');
+     responseText.textContent ="item added to the cart";
+}
+setTimeout(()=>{
+    location.reload();
+},3000);
+    
+
+
+})
+</script>

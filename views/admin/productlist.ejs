@@ -52,7 +52,7 @@
 <% products.forEach(function(product) { %>
 <tbody>
 <tr class="table-info ">
-<th><%= product._id %></th>
+<td><%= product._id %></td>
 <td><%= product.productname %></td>
 <td><%= product.productdescription %></td>
 <td><%= product.brand %></td>
@@ -69,11 +69,12 @@
     
 </td>
 <td><img src="/image/<%= product._id %>.jpeg" alt="" style="height: 70px;width: 70px;"></td>
-<td> <a class="btn btn-dark text-white" href="/editproduct/<%= product._id%>">Edit</a></td>
+<td> <a class="btn btn-dark text-white" href="/editproduct/<%= product._id%>"><i class="fa-solid fa-pen"></i></a></td>
 <!-- <td> <a class="btn btn-danger text-white" href="/deleteproduct/<%= product._id%>">Delete</a></td> -->
 <td><button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#productdelete<%= product._id %>">
-    DELETE
+    <i class="fa-solid fa-trash-can"></i>
 </button>
+
 
 <!-- Modal -->
 <div class="modal fade" id="productdelete<%= product._id %>" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -108,4 +109,24 @@
 
 </table>
 <!--Table-->
+<div class="col-md-12 d-flex align-items-center justify-content-center">
+<nav aria-label="Page navigation example" class="text-center ">
+    <ul class="pagination text-center">
+      <li class="page-item">
+        <a class="page-link text-dark" href="#" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li class="page-item"><a class="page-link text-dark"  href="/productlist/?page=1">1</a></li>
+      <li class="page-item"><a class="page-link text-dark"  href="/productlist/?page=2">2</a></li>
+      <li class="page-item"><a class="page-link text-dark" href="/productlist/?page=3">3</a></li>
+      <li class="page-item"><a class="page-link text-dark" href="/productlist/?page=4">4</a></li>
+      <li class="page-item">
+        <a class="page-link text-dark" href="#" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
 </section>
