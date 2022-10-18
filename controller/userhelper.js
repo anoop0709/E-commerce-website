@@ -289,39 +289,61 @@ module.exports = {
     cart_page:async (req,res)=>{
         let userid = req.params.id;
         let user = await User.findOne({_id:userid});
-        let cartitems = user.cart;
+        let cartlength = 0;
+        let cartqty = user.cart.map((el)=>{
+            cartlength++;
+            return el;
+           
+
+
+        });
+       
+        // let cartlength = cartqty.length();
+       console.log(cartlength); 
         
-        console.log(cartitems);
-        let productid = user.cart.map((el)=>{
-            return el.product;
-        })
+        console.log(cartqty +"hai hello");
+        // let products = user.cart.map((el)=>{
+        //     return el.product;
+        // })
         
-        let items =  await Product.findById({_id:productid}).lean();
-        console.log(items);
+        // let items =  await Product.find({});
+        // let products = items.map((el)=>{
+        //     if(el._id == productid){
+
+        //     }
+
+        
+       // console.log(items+"hai");
         // let productsitems = items.map((el)=>{
           
         //    return ;
         // })
         //console.log(productsitems);
-        console.log(productid);
-        res.render('./user/cart',{layout:'layout',cartitems,items})
+        //console.log(productid);
+        res.render('./user/cart',{layout:'layout',cartqty,cartlength})
     },
     add_to_cart:async (req,res)=>{
         let productid = req.body.productid;
+        let qty = req.body.qtyinp;
+        let price = req.body.price
         let userid = req.body.userid;
-        //let product = await Product.findOne({_id:productid});
+        console.log(req.body);
+        let product = await Product.findOne({_id:productid});
+
         let cartproduct = {
-            qty : Number(req.body.qtyinp) ,
-            product: productid
+            qty :qty ,
+            product: product,
+            price:qty*price
          }
        
         let user = await User.findOne({_id:userid});
         let proExist = user.cart.filter((el) => {
-            return el.product === productid;
+            return el.product === product._id;
         })
         if(proExist.length >= 1){
          let newcRT = user.cart.map((el) => {
              if (el.product == productid) {
+                 console.log("found");
                  el.qty++;
              }
              return el

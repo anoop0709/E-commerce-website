@@ -8,8 +8,8 @@
 
                             <ul class="slides">
                                 <li style="list-style: none;">
-                                    <div class="thumb-image border"> <img src="../image/<%= productdetails._id %>.jpeg"
-                                            data-imagezoom="true" class="img-fluid" alt=" "> </div>
+                                    <div class="thumb-image border"> <img class="img-fluid" src="../image/<%= productdetails._id %>.jpeg"
+                                            data-imagezoom="true"  alt=" "> </div>
                                 </li>
 
                             </ul>
@@ -28,7 +28,7 @@
                     <h5>
                         <%= productdetails.brand%>
                     </h5>
-                    <p><span class="item_price">$<%= productdetails.price%>.00</span>
+                    <p ><span class="item_price" id="itemprice"><%= productdetails.price%>.00</span>
                     </p>
                     <div class="rating1">
                         <ul class="stars">
@@ -234,12 +234,17 @@
 let addtocartbtn = document.querySelector('#addtocart');
 let userid = document.querySelector('#user').value;
 let productid = document.querySelector('#product').value;
-let qtyinp =document.querySelector('#qtyinp').value;
+let qtyinp =document.querySelector('#qtyinp');
+let price =document.querySelector('#itemprice').textContent;
+console.log(price);
 addtocartbtn.addEventListener('click',async (e)=>{
     e.preventDefault();
+    qtyinp = qtyinp.value;
+    console.log(qtyinp);
+
    let response = await fetch('/cart',{
         method:'POST',
-        body:JSON.stringify({productid,userid,qtyinp}),
+        body:JSON.stringify({productid,userid,qtyinp,price}),
         headers: { 'Content-Type': 'application/json' }
     })
 let check = await response.json();

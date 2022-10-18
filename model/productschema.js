@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
     },
     price:{
         type:Number,
-        required:true,
+        required:true
     },
     qty:{
         type:Number,
@@ -28,7 +28,7 @@ const productSchema = new mongoose.Schema({
     isFeatured:{
         type:Boolean,
         required:true,
-        default:false,
+        default:false
     },
     productcategory:{
         type:Object,

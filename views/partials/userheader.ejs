@@ -19,7 +19,7 @@
 
         <% if(locals.user){ %>
             <div class="col-lg-3 text-right d-flex justify-content-between align-items-center">
-            <div class="mx-1">
+            <div class="dropdown mx-1">
                 <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <%= user.fname %>
@@ -30,7 +30,7 @@
                 </ul>
             </div>
             <div class="mx-1">
-             <button class="btn"><a href="/wishlist" class="text-danger d-md-block"> Wishlist<i class="fa-regular fa-heart mx-1"></i></a></button>   
+                <a href="/wishlist" class="text-danger d-md-block"> Wishlist<i class="fa-regular fa-heart mx-1"></i></a>
             </div>
             
                <div class="">
