@@ -28,6 +28,7 @@ module.exports = {
 
     checkUser:(req,res,next) =>{
         const token = req.cookies.jwt;
+        let cartlength = 0;
 
         if(token){
             jwt.verify(token,process.env.jwtSecretKey,async (err,decodedToken)=>{
@@ -38,7 +39,13 @@ module.exports = {
         
                 }else{
                     let user = await User.findById(decodedToken.id);
+                    user.cart.forEach((el)=>{
+                        cartlength++;
+
+                    })
                     res.locals.user = user;
+                    res.locals.cartlength = cartlength;
+
                     next();
                 }
             })

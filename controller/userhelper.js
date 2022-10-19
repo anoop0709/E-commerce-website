@@ -297,37 +297,30 @@ module.exports = {
 
 
         });
+
+        let totalprice = user.cart.map((el)=>{
+            return el.price;
+         
+          
+           
+        })
+
+        let total = totalprice.reduce((acc,curr)=>{
+            return acc+curr;
+        })
        
-        // let cartlength = cartqty.length();
+        //cartlength = cartqty.length();
        console.log(cartlength); 
         
         console.log(cartqty +"hai hello");
-        // let products = user.cart.map((el)=>{
-        //     return el.product;
-        // })
-        
-        // let items =  await Product.find({});
-        // let products = items.map((el)=>{
-        //     if(el._id == productid){
-
-        //     }
-
-        
-       // console.log(items+"hai");
-        // let productsitems = items.map((el)=>{
-          
-        //    return ;
-        // })
-        //console.log(productsitems);
-        //console.log(productid);
-        res.render('./user/cart',{layout:'layout',cartqty,cartlength})
+       
+        res.render('./user/cart',{layout:'layout',cartqty,cartlength,total})
     },
     add_to_cart:async (req,res)=>{
         let productid = req.body.productid;
         let qty = req.body.qtyinp;
         let price = req.body.price
         let userid = req.body.userid;
-        console.log(req.body);
         let product = await Product.findOne({_id:productid});
 
         let cartproduct = {
@@ -341,7 +334,7 @@ module.exports = {
             return el.product === product._id;
         })
         if(proExist.length >= 1){
-         let newcRT = user.cart.map((el) => {
+         let cartqty = user.cart.map((el) => {
              if (el.product == productid) {
                  console.log("found");
                  el.qty++;
@@ -349,17 +342,73 @@ module.exports = {
              return el
          })
 
-         await User.findByIdAndUpdate({_id:userid},{$set:{cart:newcRT}});
+         await User.findByIdAndUpdate({_id:userid},{$set:{cart:cartqty}});
 
-          user.cart = newcRT
+        user.cart = newcRT
 
         }else{
-            user.cart.push(cartproduct)
+            user.cart.push(cartproduct);
         }
        
         await user.save();
        res.json({user});
-    }
-   
+    },
 
+    qty_increment: async (req,res)=>{
+         let userid = req.body.userid;
+        let qty = req.body.qty;
+        let price = req.body.price;
+        let count = req.body.count;
+        let productid = req.body.productid;
+       
+        let user = await User.findOne({_id:userid});
+         let newcart = user.cart.map((el) => {
+             if (el.product._id == productid) {
+                 console.log("found");
+                 if(count == 1){
+                     el.qty = qty;
+                    el.price = price*qty;
+                    console.log(el.qty,el.price);
+
+                 }else{
+                     el.qty = qty;
+                     el.price = price*qty;
+                 }
+                }
+             return el
+         })
+
+        
+         let cartitems = {};
+         for(let i =0; i<newcart.length;i++){
+             if(newcart[i].product._id == productid){
+                 cartitems.price = newcart[i].price;
+                 cartitems.qty = newcart[i].qty;
+                 
+             }
+
+         }
+         
+         let totalprice = user.cart.map((el)=>{
+             return el.price;
+          
+           
+            
+         })
+
+         let total = totalprice.reduce((acc,curr)=>{
+             return acc+curr;
+         })
+         console.log(total);
+
+      await User.findByIdAndUpdate({_id:userid},{$set:{cart:newcart}});
+      user.cart = newcart;
+      await user.save();
+
+        //let updatedcartproduct = user.cart
+         //res.redirect('/cart/'+ userid)
+         res.json({cartitems,total});
+    
+   
+    }
 }

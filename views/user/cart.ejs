@@ -11,7 +11,8 @@
                     <div class="col align-self-center text-right text-muted"></div>
                 </div>
             </div>    
-            <div  class="d-none"><input type="text" id="cartitem" value="<% cartqty %>"></div>
+            <div class="d-none" ><input type="text" id="user" value="<%= user._id %>"></div>
+            <div  class="d-none"><input type="text" id="cartqty" value="<% cartqty %>"></div>
             <% cartqty.forEach((cartitem)=>{%>
             <div class="row border-top border-bottom mx-2">
                 <div class="row main align-items-center">
@@ -20,23 +21,25 @@
                         <div class="row"><%= cartitem.product.brand %></div>
                         <!-- <div class="row"><%= cartitem.product.productdescription %></div> -->
                     </div>
-                    <div class="col">
-                        <a href="#" onclick="changeQty('<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>','<%= cartitem.product._id %>','<%= cartitem.qty %>','<%= cartitem.product.price %>',-1)" class="mx-2">-</a><a href="#" id="<%= cartitem.product._id %>" class=" border"><%= cartitem.qty %></a><a class="mx-2" href="#" onclick="changeQty('<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>','<%= cartitem.product._id %>','<%= cartitem.qty %>','<%= cartitem.product.price %>',1)">+</a>
+                    <div class="col-md-3 display-flex justify-content-between align-items-center">
+                        <button onclick="changeQty('<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>','<%= cartitem.product._id %>','<%= user._id %>','<%= cartitem.qty %>','<%= cartitem.product.price %>',-1)" class="btn" class = "qtychange">-</button>
+                        <a href="#" id="<%= cartitem.product._id %>" class="text-danger"><%= cartitem.qty %></a>
+                        <button class="btn" onclick="changeQty('<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>','<%= cartitem.product._id %>','<%= user._id %>','<%= cartitem.qty %>','<%= cartitem.product.price %>',1)"  class = "qtychange">+</button>
                     </div>
-                    <div class="col total" id="<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>"> <%= cartitem.price %></div><a href="#" class="close">&#10005;</a>
+                    <div class="col total" id="<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>">€ <%= cartitem.price %> .00</div><a href="#" class="close">&#10005;</a>
                 
                 </div>
             </div>
             <% }) %>
 
-            <div class="back-to-shop"><a href="#">&leftarrow;</a><span class="text-muted">Back to shop</span></div>
+            <div class="back-to-shop"><a href="/shop">&leftarrow;</a><span class="text-muted">Back to shop</span></div>
         </div>
         <div class="col-md-4 summary">
             <div class="text-center"><h5><b>Summary</b></h5></div>
             <hr>
             <div class="row mx-2">
                 <div class="col" style="padding-left:0;">items  <%= cartlength %></div>
-                <div class="col text-right carttotal" id="carttotal2"></div>
+                <div class="col text-right carttotal" id="carttotal1">€ <%= total %> .00</div>
             </div>
             <form>
                 <p>GIVE CODE</p>
@@ -44,7 +47,7 @@
             </form>
             <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
                 <div class="col">TOTAL PRICE</div>
-                <div class="col text-right" id="carttotal1"></div>
+                <div class="col text-right" class="carttotal2">€ <%= total %> .00</div>
             </div>
             <div class="col text-right">
                 <button class="btn btn-danger ">CHECKOUT</button>
@@ -57,101 +60,47 @@
 </div>
 
 <script>
-// var count = 1;
-// var countEl = document.querySelector("");
 
-// function plus() {
-    
-//     count++;
-//     countEl.textContent= count;
-// }
-// function minus() {
-//     if (count > 1) {
-//         count--;
-//         countEl.textContent = count;
-//     }
-// }
-let totalprice = 0;
-function changeQty(priceid,proid,qty,price,count) {
-    let newprice = Number(price);
-    let qtyinp = document.getElementById(proid);
-    let priceinp = document.getElementById(priceid);
-    let amounttotal = totaldiv1.innerHTML;
-    
    
-   
-    console.log(qtyinp);
-    
-    if(count == -1){
-        if(qtyinp.innerHTML > 1){
-            let qtycount = qtyinp.innerHTML;
-            console.log(qtycount+"start");
-           
-            qtycount--;
-            console.log(qtycount+"finish");
-            qtyinp.innerHTML = qtycount;
-            console.log(totalprice + "minus");
-            priceinp.innerHTML = newprice*qtycount;
-           amounttotal = (amounttotal-newprice);
-           totaldiv1.innerHTML = amounttotal;
+        let cartproducts1 = '<%- JSON.stringify(cartqty) %>';
+        let cartproduct = JSON.parse(cartproducts1);
+        console.log(cartproduct);
 
-        }else{
-            let qtycount = qtyinp.innerHTML;
-            qtyinp.innerHTML = qtycount;
-            priceinp.innerHTML = newprice;
-            let total = priceinp.textContent;
-            amounttotal = amounttotal-newprice;
-           totaldiv1.innerHTML = amounttotal;
-        }
-    }else{
-        if(count == 1){
-        let qtycount = qtyinp.textContent;
-        qtycount++;
-        console.log(qtycount);
-        qtyinp.textContent = qtycount;
+
+
+        async function changeQty(priceinp,productid,userid,qty,price,count){
+            console.log(userid,qty,price,count);
+            if(count == 1){
+                qty++;
+            }else{
+                qty--;
+            }
+            console.log(qty);
+
+            let response = await fetch('/qtyincrement',{
+                    method:'POST',
+                    body:JSON.stringify({productid,userid,qty,price}),
+                    headers:{'Content-Type':'application/json','Accept':'application/json'}
+                   
+                });
+                
+               let res = await response.json();
+               console.log(res);
+
+               
+               document.getElementById(priceinp).textContent = res.cartitems.price;
+               document.getElementById(productid).textContent = res.cartitems.qty;
+               document.querySelector('#carttotal1').textContent = res.total;
+              location.reload();
+
+            }
+               
+               
+               
+               
+             
         
-        totalprice =  newprice * qtycount;
-        console.log(totalprice+"plus");
-        priceinp.textContent = totalprice;
-        let total = priceinp.innerHTML;
-        amounttotal = amounttotal+newprice;
-           totaldiv1.innerHTML = amounttotal;
        
-
-        }
-        
-    }
-
-    
-}
-let totaldiv1 = document.querySelector('#carttotal1');
-let totaldiv2 = document.querySelector('#carttotal2');
-
-
-
-let cartqty1 = '<%- JSON.stringify(cartqty) %>';
-let cartqty2 = JSON.parse(cartqty1);
-console.log(Array.isArray(cartqty2));
-console.log(cartqty2);
-
-let eachprice = cartqty2.map((el)=>{
-    return el.price
-
-})
-let totalvalue = eachprice.reduce((acc,curr)=>{
-    return acc+curr;
-})
-console.log(totalprice);
-totaldiv1.innerHTML = Number(totalvalue) ;
-totaldiv2.innerHTML =Number(totalvalue)  ;
-
-
-
-
-   
-    
-
-    
     
    
 </script>

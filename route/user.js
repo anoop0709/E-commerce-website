@@ -57,4 +57,6 @@ router.get('/singlepage/:id',authMiddleware.checkUser,userhelper.single_view);
 router.get('/cart/:id',authMiddleware.checkUser,userhelper.cart_page);
 router.post('/cart',authMiddleware.checkUser,userhelper.add_to_cart);
 
+router.post('/qtyincrement',authMiddleware.checkUser,userhelper.qty_increment);
+
 module.exports = router;

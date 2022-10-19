@@ -33,12 +33,14 @@
                 <a href="/wishlist" class="text-danger d-md-block"> Wishlist<i class="fa-regular fa-heart mx-1"></i></a>
             </div>
             
-               <div class="">
-                <button class="btn"><a href="/cart/<%= user._id %>" class="text-dark"> My cart <i class="fas fa-cart-arrow-down"></i></a>
+              
+                <button class="btn"><a href="/cart/<%= user._id %>" class="text-dark"><i class="fas fa-cart-arrow-down"></i>
+                    <span class="badge bg-danger " style="position: absolute;top: 20px; " id="cart-count"><%= cartlength %></span>
+                </a>
                               
                 </button>
       
-               </div>
+               
                            
             </div>
             <% } else { %>
@@ -61,18 +63,7 @@
                        
     
                     </div>
-                    <ul class="cart-inner-info mb-0 d-none d-md-block mx-5">
-                        <li class="galssescart galssescart2 cart cart box_1 ">
-                            <form action="#" method="post" class="last">
-                                <input type="hidden" name="cmd" value="_cart">
-                                <input type="hidden" name="display" value="1">
-                                <button class="top_googles_cart" type="submit" name="submit" value="">
-                                   My cart <i class="fas fa-cart-arrow-down"></i>
-                                </button>
-                            </form>
-                        </li>
-                       
-                    </ul>
+                    <button class="btn"><a href="/login" class="text-dark"><i class="fas fa-cart-arrow-down"></i></a>
                    
            
                 </div> 
@@ -140,49 +131,6 @@
 
 </header>
 
-<!-- <script>
-    
-    
-    const form = document.querySelector('form');
-    form.addEventListener('submit',async (e)=>{
-        e.preventDefault();
+<script>
 
-        
-    const fnameError = document.querySelector('.fname.error');
-    const lnameError = document.querySelector('.lname.error');
-    const emailError = document.querySelector('.email.error');
-    const passwordError = document.querySelector('.password.error');
-    const phoneError = document.querySelector('.phone.error');
-
-
-        const email = document.getElementsByName('email').value
-        console.log(email);
-        const fname = document.getElementsByName('fname').value
-        const lname = document.getElementsByName('lname').value
-        const password = document.getElementsByName('password').value
-        const phone = document.getElementsByName('phone').value
-
-        try{
-            const res = await fetch('/signup',{
-                method:'POST',
-                body:JSON.stringify({fname,lname,email,password,phone}),
-                headers : {'Content-Type':'application/json'}
-
-            });
-            const data = await res.json();
-            if(data.errors){
-                fnameError.textContent = data.errors.fname;
-                lnameError.textContent = data.errors.lname;
-                emailError.textContent = data.errors.email;
-                passwordError.textContent = data.errors.password;
-                phoneError.textContent = data.errors.phone;
-
-            }
-
-        }catch(err){
-               console.log(err);
-        }
-
-    })
-
-</script> -->
+</script>
