@@ -203,6 +203,7 @@ module.exports = {
         let email = req.body.email;
         let phone = req.body.phone;
         let address = {
+            unique: uuidv4(),
             housename:req.body.housename,
             street:req.body.streetname,
             city:req.body.city,
@@ -290,6 +291,7 @@ module.exports = {
         let userid = req.params.id;
         let user = await User.findOne({_id:userid});
         let cartlength = 0;
+        let total = 0;
         let cartqty = user.cart.map((el)=>{
             cartlength++;
             return el;
@@ -304,11 +306,11 @@ module.exports = {
           
            
         })
-
-        let total = totalprice.reduce((acc,curr)=>{
+if(totalprice.length >= 1){
+        total = totalprice.reduce((acc,curr)=>{
             return acc+curr;
         })
-       
+    }
         //cartlength = cartqty.length();
        console.log(cartlength); 
         
@@ -360,6 +362,7 @@ module.exports = {
         let price = req.body.price;
         let count = req.body.count;
         let productid = req.body.productid;
+        let total = 0;
        
         let user = await User.findOne({_id:userid});
          let newcart = user.cart.map((el) => {
@@ -380,7 +383,7 @@ module.exports = {
 
         
          let cartitems = {};
-         for(let i =0; i<newcart.length;i++){
+         for(let i = 0; i<newcart.length;i++){
              if(newcart[i].product._id == productid){
                  cartitems.price = newcart[i].price;
                  cartitems.qty = newcart[i].qty;
@@ -395,10 +398,12 @@ module.exports = {
            
             
          })
-
-         let total = totalprice.reduce((acc,curr)=>{
+         console.log(totalprice);
+        if(totalprice.length >= 1){
+          total = totalprice.reduce((acc,curr)=>{
              return acc+curr;
          })
+        }
          console.log(total);
 
       await User.findByIdAndUpdate({_id:userid},{$set:{cart:newcart}});
@@ -410,5 +415,19 @@ module.exports = {
          res.json({cartitems,total});
     
    
+    },
+    delete_cart_product:async (req,res)=>{
+        let productid = req.params.id;
+        let userid = req.params.userid
+        let user = await User.findOne({_id:userid});
+        let cartproduct = {};
+        user.cart.forEach((el)=>{
+            if(el.product._id == productid){
+                 cartproduct = el;
+            }
+        })
+   await User.updateOne({_id:userid},{$pull:{cart:cartproduct}});
+   res.redirect('/cart/'+ userid)
+console.log(cartproduct);
     }
 }

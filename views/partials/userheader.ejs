@@ -35,7 +35,9 @@
             
               
                 <button class="btn"><a href="/cart/<%= user._id %>" class="text-dark"><i class="fas fa-cart-arrow-down"></i>
+                    <% if(cartlength >= 1){ %>
                     <span class="badge bg-danger " style="position: absolute;top: 20px; " id="cart-count"><%= cartlength %></span>
+                    <% } %>
                 </a>
                               
                 </button>

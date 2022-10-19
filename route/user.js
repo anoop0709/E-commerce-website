@@ -58,5 +58,6 @@ router.get('/cart/:id',authMiddleware.checkUser,userhelper.cart_page);
 router.post('/cart',authMiddleware.checkUser,userhelper.add_to_cart);
 
 router.post('/qtyincrement',authMiddleware.checkUser,userhelper.qty_increment);
+router.get('/deletecartproduct/:id/:userid',authMiddleware.checkUser,userhelper.delete_cart_product);
 
 module.exports = router;
