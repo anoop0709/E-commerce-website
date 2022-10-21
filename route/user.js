@@ -17,6 +17,7 @@ router.post('/signup',userhelper.dosignup);
 
 router.post('/sendnotification',userhelper.sendOtp);
 router.post('/verify-otp',userhelper.otpVerification);
+router.post('/signin-with-otp',userhelper.signinwith_otp)
 
 
 router.get('/login',authMiddleware.checkAuth,authMiddleware.checkUser,userhelper.getlogin);
@@ -46,7 +47,7 @@ router.get('/addressdelete/:id/:address',authMiddleware.checkUser,userhelper.del
 //user account routes--->
 
 //shop page-->
-router.get('/shop',authMiddleware.checkUser,userhelper.get_shop_page);
+router.get('/shop',authMiddleware.checkUser,userhelper.get_shop_page)
 
 
 //single page view-->
@@ -59,5 +60,9 @@ router.post('/cart',authMiddleware.checkUser,userhelper.add_to_cart);
 
 router.post('/qtyincrement',authMiddleware.checkUser,userhelper.qty_increment);
 router.get('/deletecartproduct/:id/:userid',authMiddleware.checkUser,userhelper.delete_cart_product);
+
+//place order
+
+router.get('/placeorder/:id',authMiddleware.checkUser,userhelper.placeorder);
 
 module.exports = router;

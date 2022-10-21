@@ -10,22 +10,22 @@
           </div>
           <div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item mb-1 b-1">
+                <li class="list-group-item mb-1 b-1" style="border-radius:5px ;">
                   <a class="text-dark" href="/passwordreset" class="link-danger"> Change Password</a> 
                 </li>
-                <li class="list-group-item mb-1">
+                <li class="list-group-item mb-1" style="border-radius:5px ;">
                    <a class="text-dark" href="/orderhistory">Order History</a> 
                 </li>
-                <li class="list-group-item mb-1">
+                <li class="list-group-item mb-1" style="border-radius:5px ;">
                    <a class="text-dark" href="/userprofileedit/<%= user._id %>"> Edit profile</a>
                 </li>
-                <li class="list-group-item mb-1">
-                   <a class="text-dark" href="/mycart">My Cart</a> 
+                <li class="list-group-item mb-1" style="border-radius:5px ;">
+                   <a class="text-dark" href="/cart/<%= user._id %>">My Cart</a> 
                 </li>
-                <li class="list-group-item mb-1">
+                <li class="list-group-item mb-1" style="border-radius:5px ;">
                    <a class="text-dark" href="/wishlist">Wishlist</a> 
                 </li>
-                <li class="list-group-item mb-1">
+                <li class="list-group-item mb-1" style="border-radius:5px ;">
                     <a class="text-dark" href="/logout">Logout</a> 
                 </li>
               </ul>
@@ -78,6 +78,7 @@
               <p class="mt-0 mb-0"><%= address.state %></p>
               <p class="mt-0 mb-0"><%= address.pincode %></p>
               
+              <% if(addressLength >= 1 ){ %>
               <div class="text-right">
                 <button class=" text-right btn btn-danger"><a href="/addressedit/<%= user._id %>/<%= address.unique %>" class="text-white text-right"><i class="fa-solid fa-pen"></i></a></button>
                 <button class="text-white  text-right btn btn-danger" type="button" data-toggle="modal" data-target="#addressdelete<%= address.unique %>"><i class="fa-solid fa-trash-can"></i></button>
@@ -106,6 +107,7 @@
                 </div>
                 
               </div>
+              <% } %>
              
               <hr>
               <% }) %>

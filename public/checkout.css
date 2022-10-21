@@ -92,8 +92,7 @@ td.invert-image a img {
 	font-size: 18px;
 	color: #fff;
 	text-align: center;
-	-webkit-user-select: none;
-	-moz-user-select: none;
+
 	border: 1px solid #b2b2b2;
 	vertical-align: bottom;
 }

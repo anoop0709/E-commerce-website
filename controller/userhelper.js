@@ -128,6 +128,34 @@ module.exports = {
     res.status(200).json(check.status);
     },
 
+    signinwith_otp: async (req,res)=>{
+
+        console.log(req.body);
+        const check = await client.verify.services(service_Id)
+        .verificationChecks
+        .create({to:`+91${req.body.phonenumber}`,code: req.body.otp})
+        .catch(e => {
+            console.log(e);
+            res.status(500).send(e);
+        });
+       console.log(check.status);
+      let status = check.status;
+       if(status === 'approved'){
+        let email = req.body.email;
+        
+         try{
+            const user = await User.findOne({email:email});
+            let token = createToken(user._id);
+            res.cookie('jwt', token , {httpOnly:true, maxAge:maxAge * 1000});
+            console.log(user);
+            res.json({user,status});
+        }catch(err){
+            const errors = handleLoginErrors(err);
+            res.json({errors})
+        }
+    }
+    },
+
     doLogin: async (req,res) => {
        
         const {email,password} = req.body;
@@ -152,12 +180,18 @@ module.exports = {
     },
     userAccount:async (req,res)=>{
         const userId = req.params.id;
+        let addressLength = 0;
         
        // console.log(userId);
         const user = await User.findOne({_id:userId});
+        user.address.map((el)=>{
+            addressLength++;
+
+        });
+        console.log(addressLength);
       
         //console.log(user.address);
-        res.render('./user/useraccount',{layout:"layout",user});
+        res.render('./user/useraccount',{layout:"layout",user,addressLength});
     },
     reset_password:(req,res)=>{
         res.render('./user/passwordreset',{layout:'layout'});
@@ -428,6 +462,38 @@ if(totalprice.length >= 1){
         })
    await User.updateOne({_id:userid},{$pull:{cart:cartproduct}});
    res.redirect('/cart/'+ userid)
-console.log(cartproduct);
+   console.log(cartproduct);
+    },
+
+    placeorder:async (req,res)=>{
+        let userid = req.params.id;
+        let user = await User.findOne({_id:userid});
+        let length = 0;
+        let total = 0;
+        
+       let cartproduct =  user.cart.map((el)=>{
+                return el;
+            
+        })
+       let address =  user.address.map((el)=>{
+            return el;
+        })
+        let totalprice = user.cart.map((el)=>{
+            return el.price;
+         
+          
+           
+        })
+        console.log(totalprice);
+       if(totalprice.length >= 1){
+         total = totalprice.reduce((acc,curr)=>{
+            return acc+curr;
+        })
+       }
+        console.log(cartproduct);
+        console.log(address);
+    
+        res.render('./user/placeorder',{layout:'layout',cartproduct,address,length,total})
+
     }
 }

@@ -26,6 +26,8 @@
                 </div>
                 <div class="text-right mt-5">
                     <button id="submt" class="btn btn-danger mb-4  ">Sign In</button>
+                    <button id="signwithotp" class="btn btn-danger mb-4 "  >Sign In with OTP</button>
+                    
                     <button id="verifyaccount" class="btn btn-danger mb-4" style="display: none;"> verify Account</button>
 
                 </div>
@@ -101,8 +103,76 @@
     const phoneInpform = document.getElementById('enterphone');
     const otpform = document.getElementById('otp');
     const otpbtn = document.getElementById('otpbtn');
+    const Signwithotp = document.getElementById('signwithotp');
     let emailValue;
     let phonenumberValue;
+
+    Signwithotp.addEventListener('click',(e)=>{
+        e.preventDefault();
+        form.style.display = 'none';
+        phoneInpform.style.display = 'block';
+
+        phonesubmtbtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const phoneNumber = phoneInpform.phoneinp.value;
+                    const email = phoneInpform.email.value;
+                    emailValue = email;
+                    phonenumberValue = phoneNumber;
+                    const response = await fetch('/sendnotification', {
+                        method: 'POST',
+                        body: JSON.stringify({ phone: phoneNumber }),
+                        headers: { 'Content-Type': 'application/json' }
+                    }).catch(e => console.log(e));
+
+                    if (response.ok) {
+                        phoneInpform.style.display = 'none';
+                        otpform.style.display = 'block';
+                    }
+                })
+                otpbtn.addEventListener('click',async (e)=>{
+                e.preventDefault();
+
+                const otpInpValue = otpform.otpvalue.value;
+                const responseText = document.querySelector('.responsetext');
+
+                const otpData = {
+                    phonenumber:phonenumberValue,
+                    email:emailValue,
+                    otp:otpInpValue
+                };
+                try{
+
+                    const response = await fetch('/signin-with-otp',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json','Accept':'application/json'},
+                    body:JSON.stringify(otpData)
+                   
+                });
+                console.log(response);
+                const check = await response.json();
+                console.log(check);
+                // 
+                
+                
+                responseText.textContent = check.status;
+                console.log(check);
+                otpform.style.display = 'none';
+                //responseText.style.display = 'block';
+
+                if (check.user) {
+                const user = check.user;
+                location.assign('/');
+            }
+               
+            }catch{(e => console.log(e))};
+
+               
+            });
+
+
+            
+           
+        })
     
     btn.addEventListener('click', async (e) => {
         e.preventDefault();
