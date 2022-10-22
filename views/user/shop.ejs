@@ -216,17 +216,22 @@
 
                         <div class="row">
                             <!-- /womens -->
-                            <% products.forEach((product)=>{ %>
+                            <% products.forEach((products)=>{ %>
+                                <div class="d-none"><input type="text" id="user"
+                                    value="<%= user._id %>"></div>
+                                <div class="d-none"><input type="text" id="product"
+                                    value="<%= products._id %>"></div>
+
                                 <div class="col-md-3 product-men women_two shop-gd">
 
                                     <div class="product-googles-info googles mb-4">
                                         <div class="men-pro-item">
                                             <div class="men-thumb-item">
-                                                <img src="./image/<%=  product._id %>.jpeg" alt="">
+                                                <img src="./image/<%=  products._id %>.jpeg" alt="">
 
                                                 <div class="men-cart-pro">
                                                     <div class="inner-men-cart-pro">
-                                                        <a href="/singlepage/<%= product._id%>"
+                                                        <a href="/singlepage/<%= products._id%>"
                                                             class="link-product-add-cart">Quick View</a>
                                                     </div>
                                                 </div>
@@ -237,25 +242,59 @@
                                                     <div class="grid_meta">
                                                         <div class="product_price">
                                                             <h4>
-                                                                <a href="/singlepage/<%= product._id%>">
-                                                                    <%= product.brand %>
+                                                                <a href="/singlepage/<%= products._id%>">
+                                                                    <%= products.brand %>
                                                                 </a>
                                                             </h4>
                                                             <div class="grid-price mt-2 text-danger">
                                                                 $ <span class="money " id="itemprice">
-                                                                    <%= product.price %>
+                                                                    <%= products.price %>
                                                                 </span> .00
                                                             </div>
-                                                            <a href="#" id="wishlist"><i
-                                                                    class="fa-regular fa-heart text-danger"></i></a>
+                                                         
+                                                            
+                                                            <a href="#model2"  class="btn" id="<%= products._id %>" onclick="addTowishlist('<%= products._id %>','<%= products.price %>','<%= user._id %>')" data-toggle="modal">
+                                                                <% user.whislist.forEach((el)=>{ %>
+                                                                <% if(locals.wishlength == 0 || el.product._id != products._id){ %>
+                                                                <i class="fa-regular fa-heart text-danger wishlistthin"></i>
+                                                                <% }else{ %>
+                                                                <i class="fa-solid fa-heart wishlistbold text-danger"></i>
+                                                               <% } %>
+                                                               <%})%>
+                                                            </a>
+                                                           
+                                                            <div>
+                                                       
+                                                                <div id="model2" class="modal fade">
+                                                                    <div class="modal-dialog modal-confirm">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <div class="icon-box">
+                                                                                    <i class="material-icons">&#xE876;</i>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <p class="text-center " id="responseText"></p>
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button class="btn btn-success btn-block"
+                                                                                    data-dismiss="modal">OK</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+        
+                                                            </div>
+                                                        
                                                         </div>
 
                                                     </div>
                                                     <div>
                                                         <div>
                                                             <!-- Button HTML (to Trigger Modal) -->
-                                                            <a href="#myModal1" class="btn mt-5" data-toggle="modal"
-                                                                id="addtocart"><i
+                                                            <a href="#myModal1" class="btn mt-5" data-toggle="modal" id="<%= products._id %>" 
+                                                                onclick="addToCart('<%= products._id %>','<%= products.price %>','<%= user._id %>')"
+                                                                ><i
                                                                     class="fas fa-cart-arrow-down"></i></a>
                                                         </div>
                                                         <div id="myModal1" class="modal fade">
@@ -277,12 +316,9 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="d-none"><input type="text" id="user"
-                                                                value="<%= user._id %>"></div>
-                                                        <div class="d-none"><input type="text" id="product"
-                                                                value="<%= product._id %>"></div>
-
+                                                       
                                                     </div>
+                                                    
                                                 </div>
                                                 <div class="clearfix"></div>
                                             </div>
@@ -803,6 +839,7 @@
                             </div>
                         </div>
                         <!--//slider-->
+                      
                     </div>
                 </div>
 
@@ -813,15 +850,14 @@
             </style> -->
 
                 <script>
-                    let addtocartbtn = document.querySelector('#addtocart');
-                    let userid = document.querySelector('#user').value;
-                    let productid = document.querySelector('#product').value;
-                    let price = document.querySelector('#itemprice').textContent;
-                    let wishlist = document.querySelector('#wishlist')
-                    console.log(price);
-                    addtocartbtn.addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        qtyinp = 1;
+                    
+                    // let userid = document.querySelector('#user').value;
+                    // let price = document.querySelector('#itemprice').textContent;
+                    // let wishlist = document.querySelector('#wishlist')
+                   
+
+                   async function addToCart(productid,price,userid){
+                       let qtyinp = 1;
                         console.log(qtyinp);
 
                         let response = await fetch('/cart', {
@@ -838,15 +874,37 @@
                             location.reload();
                         }, 3000);
 
+                    }
 
+                
 
-                    })
+                  async  function addTowishlist(proid,price,userid){
+                        let heartthin = document.querySelector('.wishlistthin')
+                        let heartbold = document.querySelector('.wishlistbold')
+                        let responseT = document.querySelector('#responseText');
+                        let wishbtn = document.getElementById(proid);
+                        let html = '<i class="fa-solid fa-heart text-danger"></i>';
+                    
+                       let qtyinp = 1;
+                        console.log(qtyinp);
 
-                    wishlist.addEventListener('click',(e)=>{
-                        e.preventDefault();
-                        wishlist.append = <i class="fa-solid fa-heart"></i>;
-                        
-                    })
+                        let response = await fetch('/wishlist', {
+                            method: 'POST',
+                            body: JSON.stringify({ proid, userid, qtyinp, price }),
+                            headers: { 'Content-Type': 'application/json' }
+                        })
+                        let res = await response.json();
+                        console.log(res);
+                        if (res) {
+                            
+                            responseT.textContent = "item added to the wishlist";
+                        }else{
+                    
+                            responseT.textContent = "item already in the wishlist";
+                        }
+                       
+                            location.reload();
+                          
+                    }
 
-
-                </script>
+ </script>

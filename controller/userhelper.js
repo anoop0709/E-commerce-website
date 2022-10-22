@@ -307,8 +307,10 @@ module.exports = {
     },
 
     get_shop_page:async (req,res)=>{
+       
         let products = await Product.find({});
-
+       
+       
         res.render('./user/shop',{layout:'layout',products})
 
     },
@@ -494,6 +496,42 @@ if(totalprice.length >= 1){
         console.log(address);
     
         res.render('./user/placeorder',{layout:'layout',cartproduct,address,length,total})
+
+    },
+    get_wishlist:async (req,res)=>{
+        let productid = req.body.proid;
+        let qty = req.body.qtyinp;
+        let price = req.body.price
+        let userid = req.body.userid;
+        let product = await Product.findOne({_id:productid});
+        let user = await User.findOne({_id:userid}); 
+        let count = 0;
+console.log(price);
+        let wishelement = user.whislist.map((el)=>{
+            return el;
+        })
+        wishelement.forEach((el)=>{
+            if(el.product._id == productid){
+                count = 1;
+            }
+        })
+
+        if(count == 0){
+            let wishproduct = {
+                qty :qty ,
+                product: product,
+                price:qty*price
+             }
+            user.whislist.push(wishproduct);
+            await user.save();
+             res.json({user});
+        }else{
+            res.redirect('/shop')
+        }
+
+       
+    
+       
 
     }
 }

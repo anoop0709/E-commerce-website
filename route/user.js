@@ -48,6 +48,7 @@ router.get('/addressdelete/:id/:address',authMiddleware.checkUser,userhelper.del
 
 //shop page-->
 router.get('/shop',authMiddleware.checkUser,userhelper.get_shop_page)
+router.post('/wishlist',authMiddleware.checkUser,userhelper.get_wishlist);
 
 
 //single page view-->

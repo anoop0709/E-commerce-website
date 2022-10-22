@@ -29,6 +29,7 @@ module.exports = {
     checkUser:(req,res,next) =>{
         const token = req.cookies.jwt;
         let cartlength = 0;
+        let wishlength = 0;
 
         if(token){
             jwt.verify(token,process.env.jwtSecretKey,async (err,decodedToken)=>{
@@ -43,8 +44,14 @@ module.exports = {
                         cartlength++;
 
                     })
+                    user.whislist.forEach((el)=>{
+                        wishlength++;
+                    })
+                    console.log(wishlength);
                     res.locals.user = user;
                     res.locals.cartlength = cartlength;
+                    res.locals.wishlength = wishlength;
+
 
                     next();
                 }
