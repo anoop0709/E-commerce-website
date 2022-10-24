@@ -1,0 +1,122 @@
+<div class="card mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-10 cart mx-auto">
+            <div class="title text-center">
+                <div class="row">
+                    <div class="col "><h4><b>Wishlist</b></h4></div>
+                    <!-- <div class="col align-self-center text-right text-muted"></div> -->
+                </div>
+            </div>    
+            <div class="d-none" ><input type="text" id="user" value="<%= user._id %>"></div>
+            
+            <% if(wishlength >= 1){ %>
+            <% wishlist.forEach((cartitem)=>{ %>
+            <div class="row border-top border-bottom mx-2">
+                <div class="row main align-items-center">
+                    <div class="col-2"><img class="img-fluid" src="/image/<%= cartitem.product._id %>.jpeg"></div>
+                    <div class="col">
+                        <div class="row"><%= cartitem.product.brand %></div>
+                        <!-- <div class="row"><%= cartitem.product.productdescription %></div> -->
+                    </div>
+                   
+                        <div id="<%= cartitem.product._id %>" class="text-danger mx-5"><%= cartitem.qty %></div>
+                        <div class="col total" id="<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>">€ <%= cartitem.price %> .00</div>
+
+                        <div>
+                            <div>
+                                <!-- Button HTML (to Trigger Modal) -->
+                                <a href="#myModal3" class="btn" data-toggle="modal"
+                                    id="<%= cartitem.product._id %>"
+                                    onclick="addToCart('<%= cartitem.product._id %>','<%= cartitem.price %>','<%= user._id %>')"><i
+                                        class="fas fa-cart-arrow-down"></i></a>
+                            </div>
+                            <div id="myModal3" class="modal fade">
+                                <div class="modal-dialog modal-confirm">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="icon-box">
+                                                <i class="material-icons">&#xE876;</i>
+                                            </div>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h5 class="text-center responsetext"></h5>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-success btn-block"
+                                                data-dismiss="modal">OK</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        
+                   
+                    
+                    <a href="#productdelete<%= cartitem.product._id %>" class="btn mx-2"  data-toggle="modal" >
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                    <div class="modal fade" id="productdelete<%= cartitem.product._id %>" tabindex="-1" aria-labelledby="exampleModalLabel"
+                      aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">DELETE</h5>
+                                  <button type="button" class="btn btn-danger" data-dismiss="modal"
+                                      aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                              </div>
+                              <div class="modal-body">
+                                  Do you want to remove the product ?
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-dark text-white"
+                                      data-dismiss="modal">CLOSE</button>
+                                  
+                                      <button type="button" class="btn btn-danger text-white"><a href="/deletewishlistitem/<%= cartitem.product._id %>/<%= user._id %>" class="text-decoration-none text-white"> DELETE</a> </button>
+                                 
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+                </div>
+           
+            <% }) %>
+            <% } else {%>
+           
+                <div class="text-center">
+                    <h5>Wishlist is empty</h5>
+
+                </div>
+                <% } %>
+
+            <div class="back-to-shop align-bottom"><a href="/shop">&leftarrow;</a><span class="text-muted">Back to shop</span></div>
+        </div>
+    </div>
+    </div>
+    
+<script>
+
+                    async function addToCart(productid, price, userid) {
+                        let qtyinp = 1;
+                        console.log(qtyinp);
+
+                        let response = await fetch('/carttowishlist', {
+                            method: 'POST',
+                            body: JSON.stringify({ productid, userid, qtyinp, price }),
+                            headers: { 'Content-Type': 'application/json' }
+                        })
+                        let check = await response.json();
+                        if (check) {
+                            let responseText = document.querySelector('.responsetext');
+                            responseText.textContent = "item added to the cart";
+                        }
+                        setTimeout(() => {
+                            location.reload();
+                        }, 3000);
+
+                    }
+
+</script>

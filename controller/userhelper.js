@@ -11,6 +11,9 @@ const objectId = require('mongodb').ObjectId;
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const { db } = require('../model/userschema');
+const Order = require('../model/orderschema');
+const Razorpay = require('razorpay');
+var instance = new Razorpay({ key_id: 'rzp_test_8rQGV8fr9QRNn8', key_secret: '0iA8p66fFN3Du3Pzl01fcg00' })
 
 
 const handleErrors = (err)=>{
@@ -331,27 +334,16 @@ module.exports = {
         let cartqty = user.cart.map((el)=>{
             cartlength++;
             return el;
-           
-
-
         });
 
         let totalprice = user.cart.map((el)=>{
-            return el.price;
-         
-          
-           
+            return el.price;   
         })
-if(totalprice.length >= 1){
+        if(totalprice.length >= 1){
         total = totalprice.reduce((acc,curr)=>{
             return acc+curr;
         })
     }
-        //cartlength = cartqty.length();
-       console.log(cartlength); 
-        
-        console.log(cartqty +"hai hello");
-       
         res.render('./user/cart',{layout:'layout',cartqty,cartlength,total})
     },
     add_to_cart:async (req,res)=>{
@@ -498,7 +490,7 @@ if(totalprice.length >= 1){
         res.render('./user/placeorder',{layout:'layout',cartproduct,address,length,total})
 
     },
-    get_wishlist:async (req,res)=>{
+    addTo_wishlist:async (req,res)=>{
         let productid = req.body.proid;
         let qty = req.body.qtyinp;
         let price = req.body.price
@@ -526,12 +518,121 @@ console.log(price);
             await user.save();
              res.json({user});
         }else{
-            res.redirect('/shop')
+            res.json("alreadyexists")
         }
 
        
     
        
 
+    },
+    get_wishlist: async (req,res)=>{
+        let userid = req.params.id;
+        let user = await User.findOne({_id:userid});
+        let wishlength = 0;
+        // let total = 0;
+        let wishlist = user.whislist.map((el)=>{
+            wishlength++;
+            return el;
+        });
+
+    //     let totalprice = user.cart.map((el)=>{
+    //         return el.price;   
+    //     })
+    //     if(totalprice.length >= 1){
+    //     total = totalprice.reduce((acc,curr)=>{
+    //         return acc+curr;
+    //     })
+    // }
+        res.render('./user/wishlist',{layout:'layout',wishlist,wishlength})
+    },
+    wishlist_to_cart:async (req,res)=>{
+        let productid = req.body.productid;
+        let qty = req.body.qtyinp;
+        let price = req.body.price
+        let userid = req.body.userid;
+        let product = await Product.findOne({_id:productid});
+
+        let cartproduct = {
+            qty :qty ,
+            product: product,
+            price:qty*price
+         }
+       
+        let user = await User.findOne({_id:userid});
+        let proExist = user.cart.filter((el) => {
+            return el.product === product._id;
+        })
+        if(proExist.length >= 1){
+         let cartqty = user.cart.map((el) => {
+             if (el.product == productid) {
+                 console.log("found");
+                 el.qty++;
+             }
+             return el
+         })
+
+         await User.findByIdAndUpdate({_id:userid},{$set:{cart:cartqty}});
+
+        // user.cart = newcRT
+
+        }else{
+            user.cart.push(cartproduct);
+        }
+
+        let wishlistproduct = {};
+        user.cart.forEach((el)=>{
+            if(el.product._id == productid){
+                 wishlistproduct = el;
+            }
+        })
+   await User.updateOne({_id:userid},{$pull:{whislist:wishlistproduct}});
+       
+        await user.save();
+       res.json({user});
+
+    },
+    delete_wish_product:async (req,res)=>{
+        let productid = req.params.id;
+        let userid = req.params.userid
+        let user = await User.findOne({_id:userid});
+        let wishlistproduct = {};
+        user.whislist.forEach((el)=>{
+            if(el.product._id == productid){
+                 wishlistproduct = el;
+            }
+        })
+   await User.updateOne({_id:userid},{$pull:{whislist:wishlistproduct}});
+   res.redirect('/wishlist/'+ userid);
+},
+
+place_order: async (req,res)=>{
+    let userid = req.body.userid;
+    console.log(userid);
+    let orders = {};
+    console.log(req.body);
+    let user = await User.findOne({_id:userid})
+    let cartitems = user.cart.map((el)=>{
+        return el;
+    })
+    if(req.body.paymentmethod == "cod"){
+        orders = {
+            fname: req.body.name,
+            phone:req.body.phone,
+            address: req.body.address,
+            paymentmethod:req.body.paymentmethod,
+            status:"placed"
+ }
+ 
+ 
+ console.log(orders);
+ let order = await Order.create({products:cartitems,order:orders});
+ console.log(order);
+   let usercart = await  User.updateOne({},{$set:{cart:[]}},{multi:true});
+   console.log(usercart);
+ 
     }
+
+    
+}
 }

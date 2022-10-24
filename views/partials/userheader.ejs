@@ -30,7 +30,7 @@
                 </ul>
             </div>
             <div class="mx-1">
-                <a href="/wishlist" class="text-danger d-md-block"> Wishlist<i class="fa-regular fa-heart mx-1"></i>
+                <a href="/wishlist/<%= user._id %>" class="text-danger d-md-block"> Wishlist<i class="fa-regular fa-heart mx-1"></i>
                     <% if(wishlength >= 1){ %>
                         <span class="badge bg-danger " style="position: absolute;top: 30px; border-radius: 50%;color: aliceblue; " id="wish-count"><%= wishlength %></span>
                         <% } %>

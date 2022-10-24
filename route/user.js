@@ -1,6 +1,7 @@
 const Router = require('express')
 const router = Router();
 const userhelper = require('../controller/userhelper');
+const userauthMiddleware = require('../middleware/userauthMiddleware');
 const { checkAuth } = require('../middleware/userauthMiddleware');
 const authMiddleware = require('../middleware/userauthMiddleware');
 
@@ -48,7 +49,10 @@ router.get('/addressdelete/:id/:address',authMiddleware.checkUser,userhelper.del
 
 //shop page-->
 router.get('/shop',authMiddleware.checkUser,userhelper.get_shop_page)
-router.post('/wishlist',authMiddleware.checkUser,userhelper.get_wishlist);
+router.get('/wishlist/:id',authMiddleware.checkUser,userhelper.get_wishlist)
+router.post('/wishlist',authMiddleware.checkUser,userhelper.addTo_wishlist);
+router.post('/carttowishlist',authMiddleware.checkUser,userhelper.wishlist_to_cart);
+router.get('/deletewishlistitem/:id/:userid',authMiddleware.checkUser,userhelper.delete_wish_product);
 
 
 //single page view-->
@@ -65,5 +69,6 @@ router.get('/deletecartproduct/:id/:userid',authMiddleware.checkUser,userhelper.
 //place order
 
 router.get('/placeorder/:id',authMiddleware.checkUser,userhelper.placeorder);
+router.post('/placeorder',userauthMiddleware.checkUser,userhelper.place_order);
 
 module.exports = router;
