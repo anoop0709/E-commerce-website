@@ -71,4 +71,22 @@ router.get('/deletecartproduct/:id/:userid',authMiddleware.checkUser,userhelper.
 router.get('/placeorder/:id',authMiddleware.checkUser,userhelper.placeorder);
 router.post('/placeorder',userauthMiddleware.checkUser,userhelper.place_order);
 
+router.post('/verify-payment',authMiddleware.checkUser,async (req,res)=>{
+    console.log(req.body+ "body in verifypayment");
+    let orderobj = req.body;
+    console.log(orderobj.userid);
+   await userhelper.verifyPayment(req.body).then(()=>{
+     userhelper.changepaymentstatus(orderobj.order.receipt,orderobj.userid).then(()=>{
+        res.json({status:true})
+      }).catch((err)=>{
+        console.log(err);
+        res.json({status:false})
+      })
+  
+    })
+  
+  });
+  router.get('/orderconfirmation/:orderid',authMiddleware.checkUser,userhelper.order_confirmation);
+  router.get('/view-order',authMiddleware.checkUser,userhelper.view_order)
+
 module.exports = router;

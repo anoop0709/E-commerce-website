@@ -14,6 +14,33 @@ const { db } = require('../model/userschema');
 const Order = require('../model/orderschema');
 const Razorpay = require('razorpay');
 var instance = new Razorpay({ key_id: 'rzp_test_8rQGV8fr9QRNn8', key_secret: '0iA8p66fFN3Du3Pzl01fcg00' })
+var crypto = require('crypto');
+
+
+function generateRazorpay(orderId,total,userid) {
+    console.log(orderId,total);
+    return new Promise((resolve,reject)=>{
+        var options = {
+           amount: total*100,  
+           currency: "INR",  
+           receipt: ""+orderId
+        };
+        console.log(options.amount);
+        console.log(typeof(options.amount));
+        
+        instance.orders.create(options,function(err,order){
+
+            resolve(order)
+            console.log(order)
+
+            
+        });
+          
+          
+    })
+}
+
+
 
 
 const handleErrors = (err)=>{
@@ -518,7 +545,7 @@ console.log(price);
             await user.save();
              res.json({user});
         }else{
-            res.json("alreadyexists")
+            res.json("alreadyexists");
         }
 
        
@@ -608,31 +635,89 @@ console.log(price);
 
 place_order: async (req,res)=>{
     let userid = req.body.userid;
-    console.log(userid);
-    let orders = {};
+    console.log(req.body.address);
+   let total = req.body.total;
     console.log(req.body);
     let user = await User.findOne({_id:userid})
     let cartitems = user.cart.map((el)=>{
         return el;
     })
-    if(req.body.paymentmethod == "cod"){
-        orders = {
-            fname: req.body.name,
+    let status = req.body.paymentmethod == 'cod' ? 'placed':'pending'
+let orders = {
+            fname: req.body.fname,
             phone:req.body.phone,
             address: req.body.address,
             paymentmethod:req.body.paymentmethod,
-            status:"placed"
- }
- 
+            total:total,
+            status:status
+        }
  
  console.log(orders);
- let order = await Order.create({products:cartitems,order:orders});
- console.log(order);
-   let usercart = await  User.updateOne({},{$set:{cart:[]}},{multi:true});
-   console.log(usercart);
- 
+ await Order.create({products:cartitems,order:orders,user:userid}).then(async (orderDetails)=>{
+    
+     if(req.body.paymentmethod == 'cod'){
+         res.json({success:true,data: orderDetails});
+         let usercart = await  User.updateOne({_id:userid},{$set:{cart:[]}},{multi:true});
+         console.log(usercart);
+     }
+     if(req.body.paymentmethod == 'card'){
+      generateRazorpay(objectId(response._id),total,userid).then((response)=>{
+          res.json(response)
+          console.log(response);
+        })
     }
+    
+ });
+ 
+ 
+    
 
     
+},
+order_confirmation:(req,res)=>{
+    let orderid = req.params.orderid;
+    console.log(orderid);
+    res.render('./user/orderconfirmation',{layout:'layout',orderid})
+},
+verifyPayment:(details)=>{
+    return new Promise((resolve,reject)=>{
+       console.log(details);
+        let hmac = crypto.createHmac('sha256', '0iA8p66fFN3Du3Pzl01fcg00').update(details.payment.razorpay_order_id+ '|' + details.payment.razorpay_payment_id).digest('hex');
+       if(hmac === details.payment.razorpay_signature){
+           resolve();
+           console.log("inside hmac");
+       }else{
+           reject();
+       }
+
+    })
+},
+changepaymentstatus: (orderId,userId)=>{
+    console.log(orderId);
+    return new Promise(async (resolve,reject)=>{
+       await Order.findByIdAndUpdate({_id:orderId},
+        {
+            $set:{
+               "order.status":'placed'
+            }
+        }
+        
+        ).then(async ()=>{
+            resolve()
+            let usercart = await  User.updateOne({_id:userId},{$set:{cart:[]}},{multi:true});
+    console.log(usercart);
+        }).catch((err)=>{
+            console.log(err);
+        })
+ 
+
+    })
+},
+view_order:async (req,res)=>{
+
+
+
+    res.render('./user/vieworder',{layout:'layout'})
 }
+
 }

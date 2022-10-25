@@ -15,6 +15,11 @@ const orderSchema = new mongoose.Schema({
         type:Object,
         required:true
        
+    },
+    user:{
+        type:ObjectId,
+        ref:'users'
+
     }
 
 

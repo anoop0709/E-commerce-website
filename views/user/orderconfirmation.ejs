@@ -1,0 +1,41 @@
+<section>
+    <div class="container">
+        <h3>ORDER RECEIVED</h3>
+        <h4>Thank you for your order</h4>
+        <h5>your order reference is <span class="text-danger h3"><%= orderid %></span> </h5>
+        <div id="btn">
+            <a href="/view-order/<%= orderid %>" id="btnOrder" class="btn">View Order</a>
+            <a href="/shop" id="btnHome" class="btn">View Products</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    section{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: fit-content;
+        padding: 50px;
+        left: 50%;
+        top:50%;    
+    }
+    #btnOrder,#btnHome{
+        border-radius: 5px;
+        background-color: rgb(251, 67, 67);
+        border: 0.5px solid ;
+        margin: 10px;
+        padding: 5px;
+        font-size: 20px;
+    }
+   
+    #btn{
+        margin-top: 50px;
+    }
+</style>

@@ -62,7 +62,7 @@
                         <hr>
                         <li>Total
                             <i>-</i>
-                            <span>$<%= total %>.00</span>
+                            <span id="total">$<%= total %>.00</span>
                         </li>
                     </ul>
                 </div>
@@ -73,33 +73,37 @@
                             <div class="information-wrapper">
                                 <div class="first-row form-group">
                                     <div class="controls" style="display: none;" >
-                                        <input type="text" value="<%= user._id %>" name="userid">
+                                        <input type="text" value="<%= user._id %>" name="userid" id="userid">
                                         </div>
+                                        <div class="controls" style="display: none;" >
+                                            <input type="text" value="<%= total %>" name="total" id="total">
+                                            </div>
+                                       
                                                       
                                     <div class="controls">
                                         <label class="control-label">Full name: </label>
-                                        <input class="billing-address-name form-control" type="text" name="name"
+                                        <input class="billing-address-name form-control" type="text" name="fname" id="fname"
                                             value="<%= user.fname %>">
                                     </div>
                                     <div class="card_number_grids">
                                         <div class="card_number_grid_left">
                                             <div class="controls">
                                                 <label class="control-label">Mobile number:</label>
-                                                <input class="form-control" type="text" value="<%= user.phone %>" name="phone">
+                                                <input class="form-control" type="text" value="<%= user.phone %>" name="phone" id="phone">
                                             </div>
                                         </div>
                                     </div>
                                         <div class="controls">
                                             <label class="control-label">Select address </label>
-                                            <select class="form-control option-w3ls" name="address">
-                                                <option></option>
+                                            <select class="form-control option-w3ls" name="address" id="address">
                                                 <% address.forEach((addr)=>{%>
-                                                    <option>
-                                                        <%= addr.housename %>,
-                                                            <%= addr.street %>,
-                                                                <%= addr.city %>,
-                                                                    <%= addr.state %>,
-                                                                        <%= addr.pincode %>
+                                                    <option value="<%= addr.housename %>,<%= addr.street %>,<%= addr.city %>,<%= addr.state %>,<%= addr.pincode %>"> 
+                                                                    <%= addr.housename %>,
+                                                        <%= addr.street %>,
+                                                            <%= addr.city %>,
+                                                                <%= addr.state %>,
+                                                                    <%= addr.pincode %>
+                                                       
                                                     </option>
                                                     <%})%>
 
@@ -108,14 +112,32 @@
                                         <div class="text-right mt-5">
                                             <button class="btn" style="background-color: #ff4e00;"><a href="/addaddress" class="text-white">Add address</a></button>
                                           </div>
-                                        <div class="controls">
+                                        <!-- <div class="controls">
                                             <label class="control-label">Select payment type </label>
-                                            <select class="form-control option-w3ls" name="paymentmethod">
+                                            <select class="form-control option-w3ls" name="paymentmethod" id="payment">
                                                 <option value="cod">Cash on Delivery</option>                                               
                                                 <option value="card"> Card</option>
                                             </select>
-                                        </div>
-                                   
+                                        </div> -->
+                                       
+                                            <div class="mt-5">
+                                                <label class="mb-5">Please select a Payment method</label>
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <p class="btn border p-3">Cash On Delivery</p>
+                                                     <input type="radio" name="paymentmethod" value="cod" style="width: 20px; height: 20px;"/>
+                                                   </div>
+                                                  
+                                       
+                                                   <div class="d-flex justify-content-center align-items-center">
+                                                   
+                                                   <img src="/images/razorpay.webp" alt="" style="width: 200px; height: 100px;">
+                                                   <input type="radio" name="paymentmethod" value="card" style="width: 20px; height: 20px;"/>
+                                       
+                                                 </div>
+
+                                            </div>
+                                             
+                                       
                                    
                                     
 
@@ -143,8 +165,38 @@
 </div>
 </section>
 
+
 <script>
-    
+//  let form = document.getElementById('checkout-form');
+
+//     form.addEventListener('submit',async (e)=>{
+//         e.preventDefault();
+//         let userid = document.getElementById('userid').value;
+//     let fname = document.getElementById('fname').value;
+//     let phone = document.getElementById('phone').value;
+//     let address = document.getElementsByName('address').value;
+//     let paymentmethod = document.getElementsByName('paymentmethod').value;
+//     console.log(paymentmethod);
+   
+//     let total = document.getElementById('total').innerHTML;
+
+//         let res = await fetch('/placeorder',{
+//             method:'POST',
+//             body:JSON.stringify({fname,userid,phone,address,paymentmethod,total}),
+//             headers : {'Content-Type':'application/json'}
+
+        
+       
+//         })
+//         let response = await res.json();
+//         if(response.success){
+//             location.href = '/orderconfirmation'
+//         }else{
+//             razorPayment(response)
+//             console.log(response)
+//         }
+//     })
+let userid = document.getElementById('userid').value;
     $("#checkout-form").submit((e)=>{ 
    e.preventDefault()
     $.ajax({
@@ -152,13 +204,14 @@
         type:'POST',
         data:$('#checkout-form').serialize(),
         dataType:'text',
-       success:(response)=>{ 
-     console.log(response) 
- if(response.success){
-     location.href ='/user/orderconfirmation'
+       success:(response)=>{  
+           let res = JSON.parse(response)
+           console.log(res.data);
+ if(res.success){
+     location.href ='/orderconfirmation/'+ res.data._id;
  }else{
     razorPayment(response)
-    console.log(response)
+    
     }
     } 
     }) 
@@ -166,16 +219,20 @@
 
 
      function razorPayment(order){
+        let razororder =  JSON.parse(order)
+         console.log(typeof(razororder));
+         console.log(razororder.amount + " hello hai");
+
        var options = {
    "key": "rzp_test_8rQGV8fr9QRNn8", // Enter the Key ID generated from the Dashboard
-   "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+   "amount": razororder.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
    "currency": "INR",
    "name": "Anoop",
    "description": "Test Transaction",
    "image": "https://example.com/your_logo",
-   "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+   "order_id": razororder.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
    "handler": function (response){
-       verifyPayment(response,order)
+       verifyPayment(response,razororder)
    },
    "prefill": {
        "name": "Gaurav Kumar",
@@ -189,22 +246,26 @@
        "color": "#3399cc"
    }
 };
+     
 var rzp1 = new Razorpay(options);
  rzp1.open();
-     }
+ 
+}  
 
      function verifyPayment(payment,order){
+         console.log(payment,order);
        $.ajax({
-         url:'/user/verify-payment',
+         url:'/verify-payment',
          data:{
             payment:payment,
-            order:order
+            order:order,
+            userid:userid
          },
          method:'POST',
      success:(response)=>{ 
      alert(response) 
  if(response.status){
-     location.href ='/user/orderconfirmation'
+     location.href ='/orderconfirmation/'+ order.id;
  }else{
   alert('payment failed')
 
