@@ -227,7 +227,7 @@ let userid = document.getElementById('userid').value;
    "key": "rzp_test_8rQGV8fr9QRNn8", // Enter the Key ID generated from the Dashboard
    "amount": razororder.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
    "currency": "INR",
-   "name": "Anoop",
+   "name": "GOGGLES PVT LTD",
    "description": "Test Transaction",
    "image": "https://example.com/your_logo",
    "order_id": razororder.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
@@ -263,9 +263,9 @@ var rzp1 = new Razorpay(options);
          },
          method:'POST',
      success:(response)=>{ 
-     alert(response) 
+    
  if(response.status){
-     location.href ='/orderconfirmation/'+ order.id;
+     location.href ='/orderconfirmation/'+ order.receipt;
  }else{
   alert('payment failed')
 

@@ -15,6 +15,8 @@ const Order = require('../model/orderschema');
 const Razorpay = require('razorpay');
 var instance = new Razorpay({ key_id: 'rzp_test_8rQGV8fr9QRNn8', key_secret: '0iA8p66fFN3Du3Pzl01fcg00' })
 var crypto = require('crypto');
+const humandate = require('human-date');
+const jsPDF = require('jspdf');
 
 
 function generateRazorpay(orderId,total,userid) {
@@ -661,7 +663,7 @@ let orders = {
          console.log(usercart);
      }
      if(req.body.paymentmethod == 'card'){
-      generateRazorpay(objectId(response._id),total,userid).then((response)=>{
+      generateRazorpay(objectId(orderDetails._id),total,userid).then((response)=>{
           res.json(response)
           console.log(response);
         })
@@ -714,10 +716,23 @@ changepaymentstatus: (orderId,userId)=>{
     })
 },
 view_order:async (req,res)=>{
+    let userid = req.params.userid
+    let order = await Order.find({user:userid});
+   let date =  humandate.prettyPrint(order.orderDate);
+   console.log(date);
+    
+
+console.log(order);
+
+    res.render('./user/vieworder',{layout:'layout',order,date})
+},
+
+// invoice_download:async (req,res)=>{
+
+//     let orderid = req.params.orderid;
 
 
 
-    res.render('./user/vieworder',{layout:'layout'})
-}
+// }
 
 }

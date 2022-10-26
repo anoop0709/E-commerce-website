@@ -87,6 +87,7 @@ router.post('/verify-payment',authMiddleware.checkUser,async (req,res)=>{
   
   });
   router.get('/orderconfirmation/:orderid',authMiddleware.checkUser,userhelper.order_confirmation);
-  router.get('/view-order',authMiddleware.checkUser,userhelper.view_order)
+  router.get('/view-order/:userid',authMiddleware.checkUser,userhelper.view_order);
+//   router.get('/downloadinvoice/:orderid',authMiddleware.checkUser,userhelper.invoice_download)
 
 module.exports = router;

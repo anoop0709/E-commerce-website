@@ -1,0 +1,101 @@
+<section>
+    <div class="container mx-auto ">
+        <% order.forEach((order)=>{ %>
+        <div class="col-md-12 mb-5 mt-5 p-0" id="<%= order._id %>">
+           <div class="col-md-12 border p-5 shadow-sm p-3 mb-5 bg-body rounded">
+               <div class="col">
+                    <table class="table p-0">
+                       
+                               <tr>
+                                <tr>
+                                    <td colspan="3" class="w-25"><span class="h6">Order Id:</span> 
+                                        <span class=""><%= order._id %></span>
+                                    </td>
+                                    <td colspan="12"><span class="h6">Address:</span> 
+                                       
+                                            <span class="w-25"><%= order.order.address %></span>
+                                       
+                                        
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="w-25"><span class="h6">Date:</span> 
+                                        <span class=""> <%= date %></span>
+                                    </td> 
+                               
+                                   
+                                </tr>   
+
+                                <% order.products.forEach((product)=>{ %>  
+                                   
+                                        <tr class="p-0" style="background-color: rgb(245, 99, 99);">
+                                            <td></td>
+                                            <td>Brand</td>
+                                            <td>Qty</td>
+                                            <td>Price</td>
+                                           
+                                        </tr>
+                                                                   
+                                    <tr>
+                                        <td> <img src="/image/<%= product.product._id%>.jpeg" alt="" style="width: 50px; height: 50px;"></td>   
+                                        <td><%= product.product.brand %> </td> 
+                                        <td><%= product.qty %> </td>
+                                        <td>$<%= product.price %>.00</td>
+                                    </tr>
+                                   <% }) %>
+                             
+                               
+                                </tr>
+                                   
+                                      
+                            
+                                   
+                                    <tr class="text-right">
+                                        <td colspan="12"><span class="h6 mx-2">Status:</span>  <% if(order.order.status == 'placed'){ %>
+                                            <span class="btn btn-success"><%= order.order.status %></span>
+                                            <% }else{ %>
+                                                <span class="btn btn-warning"><%= order.order.status %></span>
+                                                <% } %></td>
+                                      </tr>
+                                      <tr class="text-right">
+                                        <td colspan="12"><span class="h6 mx-2">Payment Method: </span> <%= order.order.paymentmethod %></td>
+                                      </tr>
+                                    <tr class="text-right">
+                                        <td colspan="12"><span class="h6 mx-2">Total Amount:</span>$<%= order.order.total%>.00</td>
+                                      </tr>
+                                      <% if(order.order.status == 'placed'){ %>
+                                      <tr class="text-right">
+                                        <td colspan="12"><a class="h6 mx-2 btn btn-dark text-white"   onclick="downloadInvoice('<%= order._id %>')">Download Invoice</a></td>
+                                      </tr>
+                                      <% } %>
+                                 
+                                    
+                                  <!-- </tr>   -->
+                                            
+                    </table>
+                </div>
+            </div>
+           
+        </div>
+        <% }) %>
+    </div>
+</section>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    
+    function downloadInvoice(orderid) {
+console.log("test");
+const pdf = new jsPDF();
+        pdf.html(document.body,{
+            callback:(pdf)=>{
+                pdf.save();
+            },
+            x:10,
+            y:10
+
+        })
+        
+    }
+</script>
