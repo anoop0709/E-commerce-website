@@ -16,7 +16,6 @@ const Razorpay = require('razorpay');
 var instance = new Razorpay({ key_id: 'rzp_test_8rQGV8fr9QRNn8', key_secret: '0iA8p66fFN3Du3Pzl01fcg00' })
 var crypto = require('crypto');
 const humandate = require('human-date');
-const jsPDF = require('jspdf');
 
 
 function generateRazorpay(orderId,total,userid) {
@@ -694,10 +693,13 @@ verifyPayment:(details)=>{
 
     })
 },
-changepaymentstatus: (orderId,userId)=>{
-    console.log(orderId);
+changepaymentstatus: async (orderId,userId)=>{
+    console.log(orderId + "hai order id ");
+    let productid = {};
+    
+    
     return new Promise(async (resolve,reject)=>{
-       await Order.findByIdAndUpdate({_id:orderId},
+     await Order.findByIdAndUpdate({_id:orderId},
         {
             $set:{
                "order.status":'placed'
@@ -706,8 +708,33 @@ changepaymentstatus: (orderId,userId)=>{
         
         ).then(async ()=>{
             resolve()
-            let usercart = await  User.updateOne({_id:userId},{$set:{cart:[]}},{multi:true});
-    console.log(usercart);
+            const usercart = await  User.updateOne({_id:userId},{$set:{cart:[]}},{multi:true});
+            console.log(1234);
+            const order =  await Order.findOne({_id:orderId});
+            const proandqty =  order.products.map((el)=>{
+              return productid = {
+                   id:el.product._id,
+                   qty:el.qty
+               } 
+
+           })
+           console.log(proandqty);
+            proandqty.forEach(async (el)=>{
+               const targetedProduct = await Product.findOne({_id:el.id});
+               targetedProduct.qty = targetedProduct.qty - el.qty;
+               targetedProduct.save();
+           })
+        //    for(let i =0; i < productid.length;i++){
+        //     let product =  await Product.findOne({_id:productid[i].id})
+        //     console.log(productid.qty);
+        //     console.log(product);
+        //     product.qty = product.qty-productid.qty;
+        //     await Product.findByIdAndUpdate({_id:productid[i].id},{$set:{qty:product.qty}})
+
+        //    }
+          
+          
+    //console.log(usercart);
         }).catch((err)=>{
             console.log(err);
         })
@@ -727,12 +754,17 @@ console.log(order);
     res.render('./user/vieworder',{layout:'layout',order,date})
 },
 
-// invoice_download:async (req,res)=>{
+invoice_download:async (req,res)=>{
+    let products = {};
+    let orderid = req.params.orderid;
+    let orderDetails = await Order.findOne({_id:orderid});
+    products = orderDetails.products.map((el)=>{
+        return el;
+    })
 
-//     let orderid = req.params.orderid;
 
 
 
-// }
+}
 
 }

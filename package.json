@@ -33,6 +33,7 @@
     "jsonwebtoken": "^8.5.1",
     "jspdf": "^2.5.1",
     "mongoose": "^6.6.5",
+    "nice-invoice": "^1.1.8",
     "nocache": "^3.0.4",
     "nodemon": "^2.0.20",
     "razorpay": "^2.8.3",
