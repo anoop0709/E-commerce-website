@@ -1,0 +1,210 @@
+<section>
+    <div class="container" id="orderid1">
+        <table class="table col-md-8" id="ordertable" >
+            <div id="orderid" class="d-none"><%= order._id %></div>
+            <thead>
+                <tr>
+                    <th scope="col">Order Id</th> 
+                    <th scope="col">Order Date</th>
+                    <th scope="col">User Name</th> 
+                    <th scope="col">Address</th> 
+                    <th scope="col">Status</th> 
+                    <th scope="col">Product Details</th> 
+                   
+                </tr>
+            </thead>
+            <% order.forEach((orders)=>{ %>
+             <tbody>
+                 <tr>
+                     <td scope="col"><%= orders._id %></td>
+                     <td scope="col"><%= date %></td>
+                     <td scope="col"><%= orders.order.fname %></td>
+                     <td scope="col"><%= orders.order.address %></td>
+                     <td scope="col"><button class="btn btn-dark"><%= orders.order.status %></button></td>
+                     <% orders.products.forEach((product)=>{%>
+                         <td>
+                         <img src="/image/<%= product.product._id%>.jpeg" alt="" width="50px;" height="50px">
+                         <%= product.qty %> 
+                         <%= product.price %>
+                         
+                             
+                         </td>           
+                     <%})%>
+                 </tr>
+
+             </tbody>
+             <% }) %>
+                   
+                                 
+         </table>
+
+    </div>
+   
+       
+</section>
+
+<style>
+    #orderid1{
+position: relative;
+left: 50%;
+top: 50%;
+transform: translateX(-50%);
+margin-top: 200px;
+    }
+    #ordersearchinp{
+
+border: 1px solid ;
+border-radius: 5px;
+position: relative;
+padding: 5px;
+    }
+</style>
+
+
+<script src="https://unpkg.com/jspdf-invoice-template@1.4.3/dist/index.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js">
+
+</script>
+<script>
+ $(document).ready(function () {
+    $('#ordertable').DataTable();
+});
+
+     let orderDetails = '<%- JSON.stringify(order) %>';
+     console.log(typeof(orderDetails));
+     var order1 = JSON.parse(orderDetails);
+     let date = '<%- JSON.stringify(date) %>';
+     let Date1 = JSON.parse(date);
+     let targetedOrder = {};
+     let orderid = document.getElementById('orderid').innerHTML
+
+     for(let i=0;i<order1.length;i++){
+         if(order1[i]._id == orderid){
+             targetedOrder = order1[i];
+            }
+     }
+     let brand =  targetedOrder.products.map((el)=>{
+              return  el.product.brand
+            })
+     let qty =  targetedOrder.products.map((el)=>{
+              return  el.qty
+            })
+     let price =  targetedOrder.products.map((el)=>{
+              return  el.product.price
+            })
+            let total = targetedOrder.order.total;
+     console.log(targetedOrder);
+     
+
+      function downloadInvoice() {
+         
+
+        var pdfObject = jsPDFInvoiceTemplate.default(props);
+        console.log("object created: ", pdfObject);
+      }
+
+      var props = {
+    outputType: jsPDFInvoiceTemplate.OutputType.Save,
+    returnJsPDFDocObject: true,
+    fileName: "Invoice 2021",
+    orientationLandscape: false,
+    compress: true,
+    // logo: {
+    //     src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/logo.png",
+    //     type: 'PNG', //optional, when src= data:uri (nodejs case)
+    //     width: 53.33, //aspect ratio = width/height
+    //     height: 26.66,
+    //     margin: {
+    //         top: 0, //negative or positive num, from the current position
+    //         left: 0 //negative or positive num, from the current position
+    //     }
+    // },
+    // stamp: {
+    //     inAllPages: true, //by default = false, just in the last page
+    //     src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/qr_code.jpg",
+    //     type: 'JPG', //optional, when src= data:uri (nodejs case)
+    //     width: 20, //aspect ratio = width/height
+    //     height: 20,
+    //     margin: {
+    //         top: 0, //negative or positive num, from the current position
+    //         left: 0 //negative or positive num, from the current position
+    //     }
+    // },
+    business: {
+        name: "GOGGLES",
+        address: "Albania, Tirane ish-Dogana, Durres 2001",
+        phone: "(+355) 069 11 11 111",
+        email_1: "info@goggle.com",
+        website: "www.goggles.com",
+    },
+    contact: {
+        label: "Invoice issued for:",
+        name: `${targetedOrder.order.fname}`,
+        address: `${targetedOrder.order.address}`,
+        phone: `${targetedOrder.order.phone}`,
+       
+    },
+    invoice: {
+        label: "Invoice #: ",
+        num: 19,
+        invDate:"Payment Date:"+`${Date1}`,
+        
+        headerBorder: false,
+        tableBodyBorder: false,
+        header: [
+          {
+            title: "#", 
+            style: { 
+              width: 10 
+            } 
+          }, 
+          { 
+            title: "Description",
+            style: {
+              width: 80
+            } 
+          }, 
+          { title: "Price"},
+          { title: "Quantity"},
+         
+        ],
+        table: Array.from(Array(targetedOrder.length), (item, index)=>([
+            index + 1,
+            `${brand}`,
+            "$"+`${price}`+".00",
+            `${qty}`,
+           
+        ])),
+        additionalRows:[{
+            col1: 'Total:',
+            col2:   "$"+`${total}`+".00",
+            style: {
+                fontSize: 12 //optional, default 12
+            }
+        },
+        {
+            col1: 'VAT:',
+            col2: '20%',
+            style: {
+                fontSize: 10 //optional, default 12
+            }
+        },
+        {
+            col1: 'SubTotal:',
+            col2:  "$"+`${total}`+".00",
+            style: {
+                fontSize: 10 //optional, default 12
+            }
+        }],
+       
+    },
+    footer: {
+        text: "The invoice is created on a computer and is valid without the signature and stamp.",
+    },
+    pageEnable: true,
+    pageLabel: "Page ",
+};
+       
+    
+</script>
+<!--Table-->

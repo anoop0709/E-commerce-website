@@ -13,15 +13,15 @@ const { v4: uuidv4 } = require('uuid');
 const { db } = require('../model/userschema');
 const Order = require('../model/orderschema');
 const Razorpay = require('razorpay');
-var instance = new Razorpay({ key_id: 'rzp_test_8rQGV8fr9QRNn8', key_secret: '0iA8p66fFN3Du3Pzl01fcg00' })
-var crypto = require('crypto');
+const instance = new Razorpay({ key_id: 'rzp_test_8rQGV8fr9QRNn8', key_secret: '0iA8p66fFN3Du3Pzl01fcg00' })
+const crypto = require('crypto');
 const humandate = require('human-date');
 
 
 function generateRazorpay(orderId,total,userid) {
     console.log(orderId,total);
     return new Promise((resolve,reject)=>{
-        var options = {
+        const options = {
            amount: total*100,  
            currency: "INR",  
            receipt: ""+orderId
@@ -90,7 +90,7 @@ const handleLoginErrors = (err)=>{
 }
 
 //jason web token
-let maxAge = 3 * 24 * 60 * 60;
+const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
    return jwt.sign({ id },process.env.jwtSecretKey,{ expiresIn:maxAge })
 }
@@ -153,7 +153,7 @@ module.exports = {
       
        
        if(check.status === 'approved'){
-        let email = req.body.email;
+        const email = req.body.email;
            await User.findOneAndUpdate({email:email},{isVerified:true});
     }
     res.status(200).json(check.status);
@@ -172,7 +172,7 @@ module.exports = {
        console.log(check.status);
       let status = check.status;
        if(status === 'approved'){
-        let email = req.body.email;
+        const email = req.body.email;
         
          try{
             const user = await User.findOne({email:email});
@@ -375,10 +375,10 @@ module.exports = {
         res.render('./user/cart',{layout:'layout',cartqty,cartlength,total})
     },
     add_to_cart:async (req,res)=>{
-        let productid = req.body.productid;
-        let qty = req.body.qtyinp;
-        let price = req.body.price
-        let userid = req.body.userid;
+        const productid = req.body.productid;
+        const qty = req.body.qtyinp;
+        const price = req.body.price
+        const userid = req.body.userid;
         let product = await Product.findOne({_id:productid});
 
         let cartproduct = {
@@ -391,10 +391,9 @@ module.exports = {
         let proExist = user.cart.filter((el) => {
             return el.product === product._id;
         })
-        if(proExist.length >= 1){
+        if(proExist.length >= 1 && product.qty >= 1){
          let cartqty = user.cart.map((el) => {
-             if (el.product == productid) {
-                 console.log("found");
+             if (el.product == productid && product.qty >= 1) {
                  el.qty++;
              }
              return el
@@ -405,7 +404,10 @@ module.exports = {
         user.cart = newcRT
 
         }else{
-            user.cart.push(cartproduct);
+            if(product.qty >= 1){
+                user.cart.push(cartproduct);
+            }
+           
         }
        
         await user.save();
@@ -413,11 +415,11 @@ module.exports = {
     },
 
     qty_increment: async (req,res)=>{
-         let userid = req.body.userid;
-        let qty = req.body.qty;
-        let price = req.body.price;
-        let count = req.body.count;
-        let productid = req.body.productid;
+        const userid = req.body.userid;
+        const qty = req.body.qty;
+        const price = req.body.price;
+        const count = req.body.count;
+        const productid = req.body.productid;
         let total = 0;
        
         let user = await User.findOne({_id:userid});
@@ -439,21 +441,17 @@ module.exports = {
 
         
          let cartitems = {};
-         for(let i = 0; i<newcart.length;i++){
+         for(let i = 0; i < newcart.length;i++){
              if(newcart[i].product._id == productid){
                  cartitems.price = newcart[i].price;
                  cartitems.qty = newcart[i].qty;
-                 
-             }
+            }
 
          }
          
          let totalprice = user.cart.map((el)=>{
              return el.price;
-          
-           
-            
-         })
+           })
          console.log(totalprice);
         if(totalprice.length >= 1){
           total = totalprice.reduce((acc,curr)=>{
@@ -465,9 +463,6 @@ module.exports = {
       await User.findByIdAndUpdate({_id:userid},{$set:{cart:newcart}});
       user.cart = newcart;
       await user.save();
-
-        //let updatedcartproduct = user.cart
-         //res.redirect('/cart/'+ userid)
          res.json({cartitems,total});
     
    
@@ -526,7 +521,6 @@ module.exports = {
         let product = await Product.findOne({_id:productid});
         let user = await User.findOne({_id:userid}); 
         let count = 0;
-console.log(price);
         let wishelement = user.whislist.map((el)=>{
             return el;
         })
@@ -558,63 +552,62 @@ console.log(price);
         let userid = req.params.id;
         let user = await User.findOne({_id:userid});
         let wishlength = 0;
-        // let total = 0;
         let wishlist = user.whislist.map((el)=>{
             wishlength++;
             return el;
         });
-
-    //     let totalprice = user.cart.map((el)=>{
-    //         return el.price;   
-    //     })
-    //     if(totalprice.length >= 1){
-    //     total = totalprice.reduce((acc,curr)=>{
-    //         return acc+curr;
-    //     })
-    // }
         res.render('./user/wishlist',{layout:'layout',wishlist,wishlength})
     },
+
+
     wishlist_to_cart:async (req,res)=>{
         let productid = req.body.productid;
+        console.log(productid);
         let qty = req.body.qtyinp;
         let price = req.body.price
         let userid = req.body.userid;
-        let product = await Product.findOne({_id:productid});
-
+        let productcollection = await Product.findOne({_id:productid});
+        let cartqty;
         let cartproduct = {
             qty :qty ,
-            product: product,
+            product: productcollection,
             price:qty*price
          }
        
         let user = await User.findOne({_id:userid});
         let proExist = user.cart.filter((el) => {
-            return el.product === product._id;
+             if( el.product._id == productid){
+                return el;
+            }
         })
+        console.log(proExist.length,proExist);
         if(proExist.length >= 1){
-         let cartqty = user.cart.map((el) => {
-             if (el.product == productid) {
-                 console.log("found");
+          cartqty = user.cart.map((el) => {
+             if (el.product._id == productid) {
                  el.qty++;
              }
              return el
          })
+         console.log(cartqty);
 
          await User.findByIdAndUpdate({_id:userid},{$set:{cart:cartqty}});
 
-        // user.cart = newcRT
+        
 
         }else{
             user.cart.push(cartproduct);
         }
-
         let wishlistproduct = {};
-        user.cart.forEach((el)=>{
+        user.whislist.forEach((el)=>{
             if(el.product._id == productid){
+                console.log(123456789);
                  wishlistproduct = el;
             }
         })
+        console.log(typeof(wishlistproduct));
+        //await User.findByIdAndUpdate({_id:userid},{$pull:{whislist:{_id:wishlistproduct.product._id}}})
    await User.updateOne({_id:userid},{$pull:{whislist:wishlistproduct}});
+   console.log(654321);
        
         await user.save();
        res.json({user});
@@ -635,16 +628,14 @@ console.log(price);
 },
 
 place_order: async (req,res)=>{
-    let userid = req.body.userid;
-    console.log(req.body.address);
-   let total = req.body.total;
-    console.log(req.body);
-    let user = await User.findOne({_id:userid})
-    let cartitems = user.cart.map((el)=>{
+    const userid = req.body.userid;
+    const total = req.body.total;
+    const user = await User.findOne({_id:userid})
+    const cartitems = user.cart.map((el)=>{
         return el;
     })
-    let status = req.body.paymentmethod == 'cod' ? 'placed':'pending'
-let orders = {
+    const status = req.body.paymentmethod == 'cod' ? 'placed':'pending'
+    const orders = {
             fname: req.body.fname,
             phone:req.body.phone,
             address: req.body.address,
@@ -652,28 +643,31 @@ let orders = {
             total:total,
             status:status
         }
- 
- console.log(orders);
  await Order.create({products:cartitems,order:orders,user:userid}).then(async (orderDetails)=>{
     
      if(req.body.paymentmethod == 'cod'){
          res.json({success:true,data: orderDetails});
-         let usercart = await  User.updateOne({_id:userid},{$set:{cart:[]}},{multi:true});
-         console.log(usercart);
-     }
+         await  User.updateOne({_id:userid},{$set:{cart:[]}},{multi:true});
+         const order =  await Order.findOne({_id:orderDetails._id});
+         const proandqty =  order.products.map((el)=>{
+           return productid = {
+                id:el.product._id,
+                qty:el.qty
+            } 
+          })
+         proandqty.forEach(async (el)=>{
+            const targetedProduct = await Product.findOne({_id:el.id});
+            targetedProduct.qty = targetedProduct.qty - el.qty;
+            targetedProduct.save();
+        })
+         }
      if(req.body.paymentmethod == 'card'){
       generateRazorpay(objectId(orderDetails._id),total,userid).then((response)=>{
           res.json(response)
-          console.log(response);
         })
     }
     
  });
- 
- 
-    
-
-    
 },
 order_confirmation:(req,res)=>{
     let orderid = req.params.orderid;
@@ -708,33 +702,19 @@ changepaymentstatus: async (orderId,userId)=>{
         
         ).then(async ()=>{
             resolve()
-            const usercart = await  User.updateOne({_id:userId},{$set:{cart:[]}},{multi:true});
-            console.log(1234);
+            await  User.updateOne({_id:userId},{$set:{cart:[]}},{multi:true});
             const order =  await Order.findOne({_id:orderId});
             const proandqty =  order.products.map((el)=>{
               return productid = {
                    id:el.product._id,
                    qty:el.qty
                } 
-
-           })
-           console.log(proandqty);
+             })
             proandqty.forEach(async (el)=>{
                const targetedProduct = await Product.findOne({_id:el.id});
                targetedProduct.qty = targetedProduct.qty - el.qty;
                targetedProduct.save();
            })
-        //    for(let i =0; i < productid.length;i++){
-        //     let product =  await Product.findOne({_id:productid[i].id})
-        //     console.log(productid.qty);
-        //     console.log(product);
-        //     product.qty = product.qty-productid.qty;
-        //     await Product.findByIdAndUpdate({_id:productid[i].id},{$set:{qty:product.qty}})
-
-        //    }
-          
-          
-    //console.log(usercart);
         }).catch((err)=>{
             console.log(err);
         })
@@ -746,25 +726,7 @@ view_order:async (req,res)=>{
     let userid = req.params.userid
     let order = await Order.find({user:userid});
    let date =  humandate.prettyPrint(order.orderDate);
-   console.log(date);
-    
-
-console.log(order);
-
-    res.render('./user/vieworder',{layout:'layout',order,date})
+res.render('./user/vieworder',{layout:'layout',order,date})
 },
-
-invoice_download:async (req,res)=>{
-    let products = {};
-    let orderid = req.params.orderid;
-    let orderDetails = await Order.findOne({_id:orderid});
-    products = orderDetails.products.map((el)=>{
-        return el;
-    })
-
-
-
-
 }
 
-}

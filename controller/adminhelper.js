@@ -1,9 +1,12 @@
 const Admin = require('../model/adminSchema');
 const User = require('../model/userschema');
-const Product = require('../model/productschema')
+const Product = require('../model/productschema');
+const Order = require('../model/orderschema');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const fs = require('fs');
+const humandate = require('human-date');
+
 
 //signup error handling
 const handleErrors = (err)=>{
@@ -186,6 +189,12 @@ module.exports = {
 
 
 
+    },
+    order_history: async (req,res)=>{
+        const order = await Order.find({});
+        console.log(order);
+        let date =  humandate.prettyPrint(order.orderDate);
+        res.render('./admin/orderhistory',{order,layout:'adminlayout',date})
     }
 
 

@@ -71,6 +71,8 @@ router.get('/deletecartproduct/:id/:userid',authMiddleware.checkUser,userhelper.
 router.get('/placeorder/:id',authMiddleware.checkUser,userhelper.placeorder);
 router.post('/placeorder',userauthMiddleware.checkUser,userhelper.place_order);
 
+//razorpay
+
 router.post('/verify-payment',authMiddleware.checkUser,async (req,res)=>{
     console.log(req.body+ "body in verifypayment");
     let orderobj = req.body;
@@ -88,6 +90,6 @@ router.post('/verify-payment',authMiddleware.checkUser,async (req,res)=>{
   });
   router.get('/orderconfirmation/:orderid',authMiddleware.checkUser,userhelper.order_confirmation);
   router.get('/view-order/:userid',authMiddleware.checkUser,userhelper.view_order);
- router.get('/downloadinvoice/:orderid',authMiddleware.checkUser,userhelper.invoice_download)
+
 
 module.exports = router;
