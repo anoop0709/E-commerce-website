@@ -25,6 +25,17 @@ router.get('/editproduct/:id',authMiddleware.checkAdmin,adminHelper.edit_product
 router.post('/editproduct/:id',authMiddleware.checkAdmin,adminHelper.update_product);
 router.get('/deleteproduct/:id',authMiddleware.checkAdmin,adminHelper.delete_product);
 router.get('/orderhistory',authMiddleware.checkAdmin,adminHelper.order_history);
+router.post('/changeorderstatus/:id',authMiddleware.checkAdmin,adminHelper.order_status_change);
+router.post('/sortorders',authMiddleware.checkAdmin,adminHelper.sort_order);
+
+//coupon
+router.get('/coupon',authMiddleware.checkAdmin,adminHelper.get_all_coupon)
+router.get('/addcoupon',authMiddleware.checkAdmin,adminHelper.coupon_page);
+router.post('/addcoupon',authMiddleware.checkAdmin,adminHelper.add_coupon);
+router.get('/editcoupon/:id',authMiddleware.checkAdmin,adminHelper.edit_coupon);
+router.post('/editcoupon/:id',authMiddleware.checkAdmin,adminHelper.update_coupon);
+router.get('/deletecoupon/:id',authMiddleware.checkAdmin,adminHelper.delete_coupon);
+router.post('/searchcoupon',authMiddleware.checkAdmin,adminHelper.search_coupon);
 
 
 

@@ -1,75 +1,148 @@
 <section>
-    <div class="container" id="orderid1">
-        <table class="table col-md-8" id="ordertable" >
-            <div id="orderid" class="d-none"><%= order._id %></div>
-            <thead>
-                <tr>
-                    <th scope="col">Order Id</th> 
-                    <th scope="col">Order Date</th>
-                    <th scope="col">User Name</th> 
-                    <th scope="col">Address</th> 
-                    <th scope="col">Status</th> 
-                    <th scope="col">Product Details</th> 
-                   
-                </tr>
-            </thead>
-            <% order.forEach((orders)=>{ %>
-             <tbody>
-                 <tr>
-                     <td scope="col"><%= orders._id %></td>
-                     <td scope="col"><%= date %></td>
-                     <td scope="col"><%= orders.order.fname %></td>
-                     <td scope="col"><%= orders.order.address %></td>
-                     <td scope="col"><button class="btn btn-dark"><%= orders.order.status %></button></td>
-                     <% orders.products.forEach((product)=>{%>
-                         <td>
-                         <img src="/image/<%= product.product._id%>.jpeg" alt="" width="50px;" height="50px">
-                         <%= product.qty %> 
-                         <%= product.price %>
-                         
-                             
-                         </td>           
-                     <%})%>
-                 </tr>
+    <div  class=" container ordersection">
+        <form action="/sortorders" method="post">
+            <select type="button" class="btn btn-danger mx-3" name="orderStatus">
+                <option value="">Status</option>
+                <option value="all">All</option>
+                <option value="Processing">Orders Processing</option> 
+                <option value="Shipped">Shipped orders</option>
+                <option value="Canceled">Canceled Orders</option>
+                <option value="placed">Placed Orders</option>
+                <option value="pending">Pending Orders</option>
+  
+  
+  
+            </select>  
+            <!-- <select type="button" class="btn btn-danger" name="brand">
+               
+                <option value="">Brand</option>
+                <option value="all">All</option>
+                <option value="Rayban">Rayban</option> 
+                <option value="Kennethcole">Kennethcole</option>
+                <option value="Police">Police</option>
+                <option value="Fossil">Fossil</option>
+                <option value="Opium">Opiumr</option>
+                <option value="Farenheit">Farenheit</option>
+            </select>   -->
+            <!-- <label for="fromdate" class="h6 mx-2">From</label>
+            <input type="date" name="datefrom">
+            <label for="fromdate" class="h6 mx-2">To</label>
+            <input type="date" name="dateto"> -->
 
-             </tbody>
-             <% }) %>
-                   
-                                 
-         </table>
 
+            <button type="submit" class="btn btn-dark mx-5">Sort Orders</button>       
+        </form>
     </div>
-   
-       
+    <div class="container mx-auto ordersection">
+        <% order.forEach((order)=>{ %>
+        <div class="col-md-9 mb-5 mt-5 p-0" id="<%= order._id %>">
+           <div class="col-md-12 border p-5 shadow-sm p-3 mb-5 bg-body rounded">
+               <div class="col">
+                    <table class="table p-0">
+                       <div id="orderid" class="d-none"><%= order._id %></div>
+                               <tr>
+                                <tr>
+                                    <td colspan="12" class="w-25"><span class="h6">Order Id:</span> 
+                                        <span class=""><%= order._id %></span>
+                                    </td>
+                                    
+                                </tr>
+                                
+                                <td colspan="12"><span class="h6">Address:</span> 
+                                       
+                                    <span style="width: 100px; display: flex; flex-direction: column;"><%= order.order.address %></span>
+                               
+                                
+                                  </td> 
+                             
+                                <tr>
+                                    <td colspan="2" class="w-25"><span class="h6">Date:</span> 
+                                        <span class=""> <%= order.orderDate.toLocaleString() %></span>
+                                    </td> 
+                               
+                                   
+                                </tr> 
+                               
+                                <tr class="p-0" style="background-color: rgb(245, 99, 99);">
+                                    <td></td>
+                                    <td>Brand</td>
+                                    <td>Qty</td>
+                                    <td>Price</td>
+                                   
+                                </tr>
+                                <% order.products.forEach((product)=>{ %>  
+                                   
+                                       
+                                                                   
+                                    <tr>
+                                        <td> <img src="/image/<%= product.product._id%>.jpeg" alt="" style="width: 50px; height: 50px;"></td>   
+                                        <td><%= product.product.brand %> </td> 
+                                        <td><%= product.qty %> </td>
+                                        <td>$<%= product.price %>.00</td>
+                                    </tr>
+                                   <% }) %>
+                             
+                               
+                                </tr>
+                                   
+                                      
+                            
+                                   
+                                    <tr class="text-right">
+                                        <td colspan="12"><span class="h6 mx-2">Status:</span>  <% if(order.order.status == 'placed' || order.order.status == 'Processing' || order.order.status == 'Shipped'){ %>
+                                            <span class="btn btn-success"><%= order.order.status %></span>
+                                            <% }else{ %>
+                                                <span class="btn btn-warning"><%= order.order.status %></span>
+                                                <% } %></td>
+                                      </tr>
+                                      <tr class="text-right">
+                                        <td colspan="12"><span class="h6 mx-2">Payment Method: </span> <%= order.order.paymentmethod %></td>
+                                      </tr>
+                                    <tr class="text-right">
+                                        <td colspan="12"><span class="h6 mx-2">Total Amount:</span>$<%= order.order.total%>.00</td>
+                                      </tr>
+                                      <% if(order.order.status == 'placed'|| order.order.status == 'Processing' || order.order.status == 'Shipped'){ %>
+                                      <tr class="text-right">
+                                        <td colspan="12"><a class="h6 mx-2 btn btn-dark text-white"  onclick="downloadInvoice()">Download Invoice</a></td>
+                                      </tr>
+                                      <% } %>
+                                      <tr>
+                                          <td colspan="12">
+    
+                                        <form action="/changeorderstatus/<%= order._id %>" method="post">
+                                            <select type="button" class="btn btn-danger" name="orderStatus">
+                                                <option value="">Change Delivery Status</option>
+                                                <option value="Processing">Order Processing</option> 
+                                                <option value="Shipped">Shipped</option>
+                                                <option value="Canceled">Cancel Order</option>
+                                  
+                                            </select>  
+                                            <button type="submit" class="btn btn-dark mx-5">Update Status</button>           
+                                          </form>
+                                        </td>
+                                    </tr>
+
+                    </table>
+                </div>
+            </div>
+           
+        </div>
+        <% }) %>
+    
+      
 </section>
-
 <style>
-    #orderid1{
-position: relative;
-left: 50%;
-top: 50%;
-transform: translateX(-50%);
-margin-top: 200px;
-    }
-    #ordersearchinp{
+    .ordersection{
+        position: relative;
+        margin-top: 100px;
+        left: 50%;
+        transform: translateX(-50%);
 
-border: 1px solid ;
-border-radius: 5px;
-position: relative;
-padding: 5px;
     }
 </style>
 
-
 <script src="https://unpkg.com/jspdf-invoice-template@1.4.3/dist/index.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js">
-
-</script>
 <script>
- $(document).ready(function () {
-    $('#ordertable').DataTable();
-});
-
      let orderDetails = '<%- JSON.stringify(order) %>';
      console.log(typeof(orderDetails));
      var order1 = JSON.parse(orderDetails);
@@ -207,4 +280,3 @@ padding: 5px;
        
     
 </script>
-<!--Table-->

@@ -69,18 +69,36 @@
             <hr>
             <div class="row mx-2">
                 <div class="col" style="padding-left:0;">items : <%= cartlength %></div>
-                <div class="col text-right" id="carttotal1">€ <%= total %> .00</div>
+                <div class="col text-right" id="carttotal1">€ <%= beforecouponprice %> .00</div>
             </div>
-            <form>
-                <p>GIVE CODE</p>
-                <input id="code" placeholder="Enter your code">
+            <form id="couponform" >
+                <div id="couponError" class="text-danger mb-5"></div>
+                
+                <p>COUPON CODE</p>
+                
+                    <input id="code" placeholder="Enter your code" onkeyup="this.value = this.value.toUpperCase();">
+                    <div class="text-right mt-3">
+                        <button type="submit" class="btn btn-danger">Apply</button>
+                    </div>
+                   
+                
+              
             </form>
             <div class="row mx-2" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                <div class="col">DISCOUNT</div>
+                <% if(couponValue){ %>
+                <div class="col text-right">€ <%= couponValue %>.00</div>
+                <% }else{ %>
+                    <div class="col text-right" id="discount">€ 0 .00</div>
+                    <% } %>
+            </div>
+            <div class="row mx-2" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                
                 <div class="col">TOTAL PRICE</div>
                 <div class="col text-right" id="carttotal2">€ <%= total %> .00</div>
             </div>
             <div class="col text-right">
-                <button class="btn btn-danger" ><a class="text-dark" href="/placeorder/<%= user._id %>"> CHECKOUT</a></button>
+                <a class="text-white btn btn-danger" id="checkoutbtn" href="/placeorder/<%= user._id %>"> CHECKOUT</a>
 
             </div>
             
@@ -92,12 +110,17 @@
 <script>
 
    
-        let cartproducts1 = '<%- JSON.stringify(cartqty) %>';
-        let cartproduct = JSON.parse(cartproducts1);
+        const cartproducts1 = '<%- JSON.stringify(cartqty) %>';
+        const cartproduct = JSON.parse(cartproducts1);
         console.log(cartproduct);
+        const total1 = '<%- JSON.stringify(total) %>';
+        const total = JSON.parse(total1);
+        console.log(typeof(total));
+        const userid = document.getElementById('user').value;
+        let totalprice = cartproduct.price;
+        const checkoutbtn = document.querySelector('#checkoutbtn')
 
-
-
+        let codevalue;
         async function changeQty(priceinp,productid,userid,qty,price,count){
             console.log(userid,qty,price,count);
             if(count == 1){
@@ -128,7 +151,27 @@
                
                
        
-             
+             const couponform = document.querySelector('#couponform');
+
+             couponform.addEventListener('submit',async (e)=>{
+                 e.preventDefault();
+                  codevalue = document.getElementById('code').value;
+                 let respon = await fetch('/applycoupontocart',{
+                     method:'POST',
+                     body:JSON.stringify({total,codevalue,userid,totalprice}),
+                     headers:{'Content-Type':'application/json','Accept':'application/json'}
+
+                 })
+                 let respo = await respon.json();
+                 const couponerror = document.querySelector('#couponError');
+                 if(respo.total && respo.discountvalue){
+                    document.querySelector('#carttotal2').textContent = "€"+ respo.total+".00";
+                    document.querySelector('#discount').textContent = "€"+ respo.discountvalue+".00";
+                 }else{
+                     couponerror.textContent = respo;
+                 }
+                 console.log(respo);
+             })
         
        
     

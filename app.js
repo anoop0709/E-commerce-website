@@ -9,7 +9,7 @@ require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const noCache = require('nocache');
 const fileupload = require('express-fileupload');
-
+const session = require('express-session');
 
 const mongoose  = require('mongoose');
 

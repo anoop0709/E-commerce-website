@@ -25,10 +25,11 @@
                     <div class="password error text-danger mt-3 h5"></div>
                 </div>
                 <div class="text-right mt-5">
-                    <button id="submt" class="btn btn-danger mb-4  ">Sign In</button>
-                    <button id="signwithotp" class="btn btn-danger mb-4 "  >Sign In with OTP</button>
-                    
-                    <button id="verifyaccount" class="btn btn-danger mb-4" style="display: none;"> verify Account</button>
+                    <button id="submt" class="btn btn-danger mb-4">Sign In</button>
+                    <button id="signwithotp" class="btn btn-danger mb-4 ">Sign In with OTP</button>
+
+                    <button id="verifyaccount" class="btn btn-danger mb-4" style="display: none;"> verify
+                        Account</button>
 
                 </div>
 
@@ -38,32 +39,43 @@
             <form id="enterphone" style="display: none;" class="col-md-6 px-5">
                 <div class="form-group">
                     <label class="mb-2">Email address</label>
-                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
-                        placeholder="" name="email">
+                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder=""
+                        name="email">
                 </div>
                 <div class="form-group">
-                    <label class="mb-2 mt-2">Enter a valid phone number</label>
+                    <label class="mb-2 mt-2">Enter phone number</label>
                     <input type="tel" class="form-control" id="phoneinp" placeholder="" name="phoneinp">
+                    <div id="phoneerror" class="text-danger mt-5" style="display: none;">Please enter a valid
+                        phonenumber</div>
                 </div>
-                    <div class="text-right mt-5">
-                        <button id="phonesubmt" class="btn btn-danger mb-4  ">Send OTP</button>
+                <div class="text-right mt-5">
+                    <button id="phonesubmt" class="btn btn-danger mb-4  ">Send OTP</button>
 
 
-                    </div>
+                </div>
 
-                
+
             </form>
             <form id="otp" style="display: none;" class="col-md-6 px-5">
+           <div id="counter" class="text-white"></div>
                 <div class="form-group">
 
                     <input type="text" class="form-control" id="otpinp" placeholder="" name="otpvalue">
                     <label class="mb-2 mt-2">Enter OTP for verification</label>
 
                 </div>
-                <div class="text-center">
-                    <!-- Button HTML (to Trigger Modal) -->
-                    <a href="#myModal" class="btn btn-danger" data-toggle="modal" id="otpbtn">verify</a>
+                <div class="d-flex align-items-start">
+                    <div class="" id="sendagain" style="display: none;width: fit-content;">
+                        <button id="phonesubmt" class="btn btn-danger mb-4  ">Send Again</button>
+    
+    
+                    </div>
+                    <div class="d-flex align-items-start mx-5" style="width: fit-content;">
+                        <!-- Button HTML (to Trigger Modal) -->
+                        <a href="#myModal" class="btn btn-danger text-white" data-toggle="modal" id="otpbtn">Verify</a>
+                    </div>
                 </div>
+                
 
 
 
@@ -94,8 +106,8 @@
 <!---->
 <script>
 
-
-
+    const sendAgain = document.getElementById('sendagain');
+    const counterdiv = document.getElementById('counter');
     const form = document.querySelector('#login');
     const btn = document.getElementById('submt');
     const verifybtn = document.getElementById('verifyaccount');
@@ -104,76 +116,110 @@
     const otpform = document.getElementById('otp');
     const otpbtn = document.getElementById('otpbtn');
     const Signwithotp = document.getElementById('signwithotp');
+    const phoneError = document.getElementById("phoneerror");
     let emailValue;
     let phonenumberValue;
 
-    Signwithotp.addEventListener('click',(e)=>{
+    Signwithotp.addEventListener('click', (e) => {
         e.preventDefault();
         form.style.display = 'none';
         phoneInpform.style.display = 'block';
 
         phonesubmtbtn.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    const phoneNumber = phoneInpform.phoneinp.value;
-                    const email = phoneInpform.email.value;
-                    emailValue = email;
-                    phonenumberValue = phoneNumber;
-                    const response = await fetch('/sendnotification', {
-                        method: 'POST',
-                        body: JSON.stringify({ phone: phoneNumber }),
-                        headers: { 'Content-Type': 'application/json' }
-                    }).catch(e => console.log(e));
+            e.preventDefault();
+            const phoneNumber = phoneInpform.phoneinp.value;
+            const email = phoneInpform.email.value;
+            emailValue = email;
+            phonenumberValue = phoneNumber;
+            const length = phoneNumber.length;
+            console.log(length);
 
-                    if (response.ok) {
-                        phoneInpform.style.display = 'none';
-                        otpform.style.display = 'block';
+            if (length != 10 || isNaN(phoneNumber) || phoneNumber == '') {
+                phoneError.style.display = 'block';
+            } else {
+                const response = await fetch('/sendnotification', {
+                    method: 'POST',
+                    body: JSON.stringify({ phone: phoneNumber }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).catch(e => console.log(e));
+
+                console.log(response.ok);
+                if (response.ok) {
+
+                    phoneInpform.style.display = 'none';
+                    otpform.style.display = 'block';
+                    startCountdown(60);
+                    function startCountdown(seconds) {
+                        let counter = seconds;
+                        const myInterval = setInterval(() => {
+                            console.log(counter);
+                            counter--;
+                            counterdiv.innerHTML = "0:"+counter+":00";
+                            if (counter == 0) {
+                                clearInterval(myInterval);
+                                sendAgain.style.display = 'block';
+                                sendAgain.addEventListener('click', async (e) => {
+                                    e.preventDefault();
+                                    await fetch('/sendnotification', {
+                                        method: 'POST',
+                                        body: JSON.stringify({ phone: phonenumberValue }),
+                                        headers: { 'Content-Type': 'application/json' }
+                                    })
+                                })
+                            }
+                        }, 1000);
+
+
                     }
-                })
-                otpbtn.addEventListener('click',async (e)=>{
-                e.preventDefault();
+                }
+            }
+        })
 
-                const otpInpValue = otpform.otpvalue.value;
-                const responseText = document.querySelector('.responsetext');
+        otpbtn.addEventListener('click', async (e) => {
+            e.preventDefault();
 
-                const otpData = {
-                    phonenumber:phonenumberValue,
-                    email:emailValue,
-                    otp:otpInpValue
-                };
-                try{
+            const otpInpValue = otpform.otpvalue.value;
+            const responseText = document.querySelector('.responsetext');
 
-                    const response = await fetch('/signin-with-otp',{
-                    method:'POST',
-                    headers:{'Content-Type':'application/json','Accept':'application/json'},
-                    body:JSON.stringify(otpData)
-                   
+            const otpData = {
+                phonenumber: phonenumberValue,
+                email: emailValue,
+                otp: otpInpValue
+            };
+            try {
+
+                const response = await fetch('/signin-with-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(otpData)
+
                 });
                 console.log(response);
                 const check = await response.json();
                 console.log(check);
                 // 
-                
-                
+
+
                 responseText.textContent = check.status;
                 console.log(check);
                 otpform.style.display = 'none';
                 //responseText.style.display = 'block';
 
                 if (check.user) {
-                const user = check.user;
-                location.assign('/');
-            }
-               
-            }catch{(e => console.log(e))};
+                    const user = check.user;
+                    location.assign('/');
+                }
 
-               
-            });
+            } catch { (e => console.log(e)) };
 
 
-            
-           
-        })
-    
+        });
+
+
+
+
+    })
+
     btn.addEventListener('click', async (e) => {
         e.preventDefault();
         const emailError = document.querySelector('.email');
@@ -228,48 +274,48 @@
                         otpform.style.display = 'block';
                     }
                 })
-                otpbtn.addEventListener('click',async (e)=>{
-                e.preventDefault();
+                otpbtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
 
-                const otpInpValue = otpform.otpvalue.value;
-                const responseText = document.querySelector('.responsetext');
+                    const otpInpValue = otpform.otpvalue.value;
+                    const responseText = document.querySelector('.responsetext');
 
-                const otpData = {
-                    phonenumber:phonenumberValue,
-                    email:emailValue,
-                    otp:otpInpValue
-                };
-                try{
+                    const otpData = {
+                        phonenumber: phonenumberValue,
+                        email: emailValue,
+                        otp: otpInpValue
+                    };
+                    try {
 
-                    const response = await fetch('/verify-otp',{
-                    method:'POST',
-                    headers:{'Content-Type':'application/json','Accept':'application/json'},
-                    body:JSON.stringify(otpData)
-                   
+                        const response = await fetch('/verify-otp', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                            body: JSON.stringify(otpData)
+
+                        });
+                        console.log(response + "hoi");
+                        const check = await response.json();
+                        console.log(check + "hai");
+                        // 
+
+
+                        responseText.textContent = check;
+                        console.log("hai please print " + check);
+                        otpform.style.display = 'none';
+                        //responseText.style.display = 'block';
+
+                        setTimeout(() => {
+                            location.assign('/login');
+
+                        }, 3000);
+
+
+
+
+                    } catch { (e => console.log(e)) };
+
+
                 });
-                console.log(response+"hoi");
-                const check = await response.json();
-                console.log(check+"hai");
-                // 
-                
-                
-                responseText.textContent = check;
-                console.log("hai please print "+ check);
-                otpform.style.display = 'none';
-                //responseText.style.display = 'block';
-
-                setTimeout(() => {
-                    location.assign('/login');
-    
-               },3000);
-               
-
-                
-               
-                }catch{(e => console.log(e))};
-
-               
-            });
 
 
             }

@@ -68,7 +68,7 @@ router.get('/deletecartproduct/:id/:userid',authMiddleware.checkUser,userhelper.
 
 //place order
 
-router.get('/placeorder/:id',authMiddleware.checkUser,userhelper.placeorder);
+router.get('/placeorder/:userid',authMiddleware.checkUser,userhelper.placeorder);
 router.post('/placeorder',userauthMiddleware.checkUser,userhelper.place_order);
 
 //razorpay
@@ -91,5 +91,7 @@ router.post('/verify-payment',authMiddleware.checkUser,async (req,res)=>{
   router.get('/orderconfirmation/:orderid',authMiddleware.checkUser,userhelper.order_confirmation);
   router.get('/view-order/:userid',authMiddleware.checkUser,userhelper.view_order);
 
+// apply coupon to cart
 
+router.post('/applycoupontocart',authMiddleware.checkUser,userhelper.apply_coupon);
 module.exports = router;

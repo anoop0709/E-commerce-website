@@ -1,0 +1,27 @@
+<div class="heading">
+    <h2>Add Coupon</h2>
+</div>
+<section class="addproduct">
+    <div class="container col-md-3 mb-5 pb-5 mt-5">
+        <form action="/editcoupon/<%= coupon._id %>" method="post">
+            <div class="mb-3">
+                <label class="form-label">Coupon:</label>
+                <input type="text" class="form-control" onkeyup="this.value = this.value.toUpperCase();" name="coupon" value="<%= coupon.coupon %>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Coupon Value:</label>
+                <input type="text" class="form-control" name="couponValue" value="<%= coupon.couponValue %>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Max Value:</label>
+                <input type="text" class="form-control" name="maxValue" value="<%= coupon.maxAmount %>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Min Value:</label>
+                <input type="text" class="form-control" name="minValue" value="<%= coupon.minAmount %>">
+            </div>
+            <button type="submit" class="btn btn-dark text-white mt-4 mb-4 ">UPDATE COUPON</button>
+        </form>
+    </div>
+</div>
+</section>
