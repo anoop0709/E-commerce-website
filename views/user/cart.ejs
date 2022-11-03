@@ -23,9 +23,9 @@
                         <!-- <div class="row"><%= cartitem.product.productdescription %></div> -->
                     </div>
                     <div class="col-md-3 display-flex justify-content-between align-items-center">
-                        <button onclick="changeQty('<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>','<%= cartitem.product._id %>','<%= user._id %>','<%= cartitem.qty %>','<%= cartitem.product.price %>',-1)" class="btn" class = "qtychange">-</button>
+                        <button onclick="changeQty('<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>','<%= cartitem.product._id %>','<%= cartitem.qty %>','<%= cartitem.product.price %>',-1)" class="btn" class = "qtychange">-</button>
                         <a href="#" id="<%= cartitem.product._id %>" class="text-danger"><%= cartitem.qty %></a>
-                        <button class="btn" onclick="changeQty('<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>','<%= cartitem.product._id %>','<%= user._id %>','<%= cartitem.qty %>','<%= cartitem.product.price %>',1)"  class = "qtychange">+</button>
+                        <button class="btn" onclick="changeQty('<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>','<%= cartitem.product._id %>','<%= cartitem.qty %>','<%= cartitem.product.price %>',1)"  class = "qtychange">+</button>
                     </div>
                     <div class="col total" id="<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>">€ <%= cartitem.price %> .00</div><button class="text-white  text-right btn btn-danger" type="button" data-toggle="modal" data-target="#productdelete<%= cartitem.product._id %>"><i class="fa-solid fa-trash-can"></i></button>
                 
@@ -45,7 +45,7 @@
                                   <button type="button" class="btn btn-dark text-white"
                                       data-dismiss="modal">CLOSE</button>
                                   
-                                      <button type="button" class="btn btn-danger text-white"><a href="/deletecartproduct/<%= cartitem.product._id %>/<%= user._id %>" class="text-decoration-none text-white"> DELETE</a> </button>
+                                      <button type="button" class="btn btn-danger text-white"><a href="/deletecartproduct/<%= cartitem.product._id %>/<%= user._id %>/<%= total %>" class="text-decoration-none text-white"> DELETE</a> </button>
                                  
                               </div>
                           </div>
@@ -121,21 +121,25 @@
         const checkoutbtn = document.querySelector('#checkoutbtn')
 
         let codevalue;
-        async function changeQty(priceinp,productid,userid,qty,price,count){
+        async function changeQty(priceinp,productid,qty,price,count){
             console.log(userid,qty,price,count);
             if(count == 1){
                 qty++;
             }else{
-                qty--;
+                if(qty > 1){
+                    qty--;
+                }
+               
             }
             console.log(qty);
 
             let response = await fetch('/qtyincrement',{
                     method:'POST',
-                    body:JSON.stringify({productid,userid,qty,price}),
+                    body:JSON.stringify({productid,userid,qty,price,count}),
                     headers:{'Content-Type':'application/json','Accept':'application/json'}
                    
                 });
+                console.log(response);
                 
                let res = await response.json();
                console.log(res);
@@ -169,6 +173,7 @@
                     document.querySelector('#discount').textContent = "€"+ respo.discountvalue+".00";
                  }else{
                      couponerror.textContent = respo;
+                   
                  }
                  console.log(respo);
              })

@@ -100,9 +100,9 @@ const createToken = (id) => {
 
 module.exports = {
 
-    homePage: (req, res) => {
-
-        res.render('./user/index', { layout: "layout" })
+    homePage:async (req, res) => {
+let products = await Product.find({});
+        res.render('./user/index', { layout: "layout",products })
 
     },
     getsignUp: (req, res) => {
@@ -115,10 +115,13 @@ module.exports = {
     },
     dosignup: async (req, res) => {
         console.log(req.body);
-        const { fname, email, password, phone } = req.body;
+        const { fname, email, newpassword, phone } = req.body;
         console.log(fname);
+       
+        let password = await bcrypt.hash(newpassword,10);
 
         try {
+            
             const user = await User.create({ fname, email, password, phone });
             res.json({ user });
         } catch (err) {
@@ -137,7 +140,7 @@ module.exports = {
             .then(verification => console.log(verification.status))
             .catch(e => {
                 console.log(e);
-                res.status(500).send(e);
+                res.status(500).send(e)
             });
         res.sendStatus(200);
     },
@@ -178,9 +181,9 @@ module.exports = {
             try {
                 const user = await User.findOne({ email: email });
                 let token = createToken(user._id);
-                res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+                res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 }).json({ user, status });
                 console.log(user);
-                res.json({ user, status });
+                
             } catch (err) {
                 const errors = handleLoginErrors(err);
                 res.json({ errors })
@@ -190,15 +193,17 @@ module.exports = {
 
     doLogin: async (req, res) => {
 
-        const { email, password } = req.body;
+        
+        const email = req.body.email;
+        const password = req.body.password
         console.log(email, password);
 
         try {
             const user = await User.login(email, password);
             let token = createToken(user._id);
-            res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
+            res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 }).json({ user })
             console.log(user);
-            res.json({ user })
+           
         } catch (err) {
             const errors = handleLoginErrors(err);
             res.json({ errors })
@@ -206,8 +211,8 @@ module.exports = {
 
     },
     getlogout: (req, res) => {
-        res.cookie('jwt', '', { maxAge: 1 })
-        res.redirect('/');
+        res.cookie('jwt', '', { maxAge: 1 }).redirect('/');
+        
 
     },
     userAccount: async (req, res) => {
@@ -231,7 +236,10 @@ module.exports = {
     },
     reset_password_post: async (req, res) => {
         //let userid = req.params.id;
-        let { oldpassword, newpassword, userid } = req.body;
+       
+        const oldpassword = req.body.oldpassword;
+        const newpassword = req.body.newpassword;
+        const userid = req.body.userid;
 
         console.log(oldpassword, newpassword, userid);
 
@@ -242,14 +250,14 @@ module.exports = {
                 let userpassword = await bcrypt.compare(oldpassword, user.password);
                 if (userpassword) {
                     console.log(userpassword);
-                    const salt = await bcrypt.genSalt();
-                    let Newpassword = await bcrypt.hash(newpassword, salt);
+                   
+                    let Newpassword = await bcrypt.hash(newpassword,10);
                     console.log(Newpassword);
-                    let user = await User.updateOne({ _id: userid }, { password: Newpassword })
-                    console.log(user);
-                    res.json({ user });
+                    let updateuser = await User.findByIdAndUpdate({ _id: userid },{ password: Newpassword })
+                    console.log(updateuser);
+                    res.json({ updateuser });
                 } else {
-                    res.json({ message: 'password entered wrong' })
+                    res.json({ message: 'password entered wrong' });
                     console.log('password entered wrong');
                 }
             } catch (err) {
@@ -346,6 +354,53 @@ module.exports = {
         res.render('./user/shop', { layout: 'layout', products })
 
     },
+    search_product:async (req,res)=>{
+        console.log(req.body);
+        const brand = req.body.brand;
+        const price = req.body.price;
+        let price1, minprice1, maxprice1;
+        if(price != "all"){
+        price1 = price.split("-");
+         minprice1 = price1[0];
+         maxprice1= price1[1];
+        }
+       
+        const minprice = Number(minprice1);
+        const maxprice = Number(maxprice1);
+        console.log(minprice,maxprice);
+        const shape = req.body.shape;
+        const frametype = req.body.frametype;
+        const color = req.body.color;
+        const gender = req.body.gender
+       
+        let product = await Product.find({});
+        let products = product.filter((el)=>{
+            if(el.brand == brand || brand == "all"){
+                console.log(122);
+                if((el.price >= minprice && el.price <= maxprice )|| price == "all"){
+                    console.log(1);
+                    if(el.productcategory.shape == shape || shape == "all"){
+                        console.log(2);
+                        if(el.productcategory.frametype == frametype || frametype == "all" ){
+                            console.log(3);
+                            if(el.productcategory.color == color || color == "all" ){
+                                console.log(4);
+                                if(el.productcategory.gender == gender || gender == "all" ){
+                                    console.log(5);
+                                    return el;
+
+                                }
+                            
+                            }
+                        }
+                    }
+                }
+            }
+            
+        })
+        console.log(products);
+        res.render('./user/shop', { layout: 'layout', products })
+    },
     single_view: async (req, res) => {
         let productid = req.params.id;
         let productdetails = await Product.findOne({ _id: productid });
@@ -361,7 +416,7 @@ module.exports = {
         let cartlength = 0;
         let total = 0;
         let coupon;
-        let couponValue,targetedcoupon;
+        let couponValue, targetedcoupon;
         const token = req.cookies.coupon;
 
         if (token) {
@@ -374,9 +429,9 @@ module.exports = {
                 }
             })
         }
-        if(coupon){
-        targetedcoupon = await Coupon.findOne({ coupon:coupon.id });
-        couponValue = targetedcoupon.couponValue;
+        if (coupon) {
+            targetedcoupon = await Coupon.findOne({ coupon: coupon.id });
+            couponValue = targetedcoupon.couponValue;
         }
         let cartqty = user.cart.map((el) => {
             cartlength++;
@@ -458,9 +513,9 @@ module.exports = {
                 }
             })
         }
-        if(coupon){
-        const targetedcoupon = await Coupon.findOne({ coupon: coupon.id });
-         minValue = targetedcoupon.minAmount;
+        if (coupon) {
+            const targetedcoupon = await Coupon.findOne({ coupon: coupon.id });
+            minValue = targetedcoupon.minAmount;
         }
         console.log(minValue);
         let user = await User.findOne({ _id: userid });
@@ -500,7 +555,7 @@ module.exports = {
             })
         }
         console.log(total);
-        if(total < minValue ){
+        if (total < minValue) {
             res.cookie('coupon', '', { maxAge: 1 })
         }
 
@@ -514,14 +569,44 @@ module.exports = {
     delete_cart_product: async (req, res) => {
         let productid = req.params.id;
         let userid = req.params.userid
-        let user = await User.findOne({ _id: userid });
+        let total = req.params.total
+        const user = await User.findOne({ _id: userid });
         let cartproduct = {};
         user.cart.forEach((el) => {
             if (el.product._id == productid) {
                 cartproduct = el;
             }
-        })
+        });
+        let sessioncoupon;
+        const token = req.cookies.coupon;
+
+        if (token) {
+            jwt.verify(token, process.env.jwtSecretKey, (err, decodedToken) => {
+                if (err) {
+                    console.log(err.message);
+                } else {
+                    sessioncoupon = decodedToken;
+
+                }
+            })
+        }
+        console.log(sessioncoupon);
+        const targetedcoupon = await Coupon.findOne({coupon:sessioncoupon.id})
+        const minvalue = targetedcoupon.minAmount;
+       
+
         await User.updateOne({ _id: userid }, { $pull: { cart: cartproduct } });
+        let cartlength = 0;
+        const updateduser = await User.findOne({ _id: userid });
+         updateduser.cart.map((el)=>{
+            cartlength++;
+        })
+      
+        console.log(cartlength);
+        if(sessioncoupon && (total < minvalue || cartlength == 0 ) ){
+            console.log(1234567898765432123456);
+            res.cookie('coupon', '', { maxAge: 1 });
+        }
         res.redirect('/cart/' + userid)
         console.log(cartproduct);
     },
@@ -548,10 +633,10 @@ module.exports = {
                 }
             })
         }
-        if(coupon){
-        targetedcoupon = await Coupon.findOne({ coupon: coupon.id });
-        couponValue = targetedcoupon.couponValue;
-        console.log(coupon.id);
+        if (coupon) {
+            targetedcoupon = await Coupon.findOne({ coupon: coupon.id });
+            couponValue = targetedcoupon.couponValue;
+            console.log(coupon.id);
         }
         let cartproduct = user.cart.map((el) => {
             return el;
@@ -697,6 +782,19 @@ module.exports = {
     place_order: async (req, res) => {
         const userid = req.body.userid;
         const total = req.body.total;
+        let coupon;
+        const token = req.cookies.coupon;
+
+        if (token) {
+            jwt.verify(token, process.env.jwtSecretKey, (err, decodedToken) => {
+                if (err) {
+                    console.log(err.message);
+                } else {
+                    coupon = decodedToken;
+
+                }
+            })
+        }
         const user = await User.findOne({ _id: userid })
         const cartitems = user.cart.map((el) => {
             return el;
@@ -713,7 +811,15 @@ module.exports = {
         await Order.create({ products: cartitems, order: orders, user: userid }).then(async (orderDetails) => {
 
             if (req.body.paymentmethod == 'cod') {
-                res.json({ success: true, data: orderDetails });
+                if (coupon) {
+                    const coupons = await Coupon.findOne({ coupon: coupon.id });
+                    coupons.userid.push(userid);
+                    await coupons.save();
+                    res.cookie('coupon', '', { maxAge: 1 }).json({ success: true, data: orderDetails });
+                }else{
+                    res.json({ success: true, data: orderDetails });
+                }
+                
                 await User.updateOne({ _id: userid }, { $set: { cart: [] } }, { multi: true });
                 const order = await Order.findOne({ _id: orderDetails._id });
                 const proandqty = order.products.map((el) => {
@@ -727,10 +833,19 @@ module.exports = {
                     targetedProduct.qty = targetedProduct.qty - el.qty;
                     targetedProduct.save();
                 })
+               
             }
             if (req.body.paymentmethod == 'card') {
-                generateRazorpay(objectId(orderDetails._id), total, userid).then((response) => {
-                    res.json(response)
+                generateRazorpay(objectId(orderDetails._id), total, userid).then(async (response) => {
+                    
+                    if (coupon) {
+                        const coupons = await Coupon.findOne({ coupon: coupon.id });
+                        coupons.userid.push(userid);
+                        await coupons.save();
+                        res.cookie('coupon', '', { maxAge: 1 }).json(response);
+                    }else{
+                        res.json(response)
+                    }
                 })
             }
 
@@ -757,19 +872,7 @@ module.exports = {
     changepaymentstatus: async (orderId, userId) => {
         console.log(orderId + "hai order id ");
         let productid = {};
-        let coupon;
-        const token = req.cookies.coupon;
 
-        if (token) {
-            jwt.verify(token, process.env.jwtSecretKey, (err, decodedToken) => {
-                if (err) {
-                    console.log(err.message);
-                } else {
-                    coupon = decodedToken;
-
-                }
-            })
-        }
 
 
         return new Promise(async (resolve, reject) => {
@@ -795,11 +898,7 @@ module.exports = {
                     targetedProduct.qty = targetedProduct.qty - el.qty;
                     targetedProduct.save();
                 })
-                if(coupon){
-               const coupons =  await Coupon.findOne({coupon:coupon.id});
-               coupons.userid.push(userId);
-               res.cookie('coupon', '', { maxAge: 1 });
-                }
+
             }).catch((err) => {
                 console.log(err);
             })
@@ -809,12 +908,16 @@ module.exports = {
     },
     view_order: async (req, res) => {
         let userid = req.params.userid
-        let order = await Order.find({ user: userid });
-        let date = humandate.prettyPrint(order.orderDate);
+        let order = await Order.find({ user: userid }).sort({"orderDate":-1});
+        let date =  order.map((order)=>{
+            return order.orderDate.toLocaleString();
+        })
+       // let date = humandate.prettyPrint(order.orderDate);
         res.render('./user/vieworder', { layout: 'layout', order, date })
     },
 
     apply_coupon: async (req, res) => {
+        console.log(req.body);
         const userId = req.body.userid;
         let total = req.body.total;
         let sessioncoupon;
@@ -839,44 +942,60 @@ module.exports = {
         }
 
         if (coupon) {
-            if (sessioncoupon){
+            if (sessioncoupon) {
                 res.json("Already applied a coupon");
-            }else{
+            } else {
 
-                if (coupon.userid == 0) {
+                if (coupon.userid.length == 0) {
                     if (total >= coupon.minAmount && total <= coupon.maxAmount) {
                         let token = createToken(couponcode);
-                        res.cookie('coupon', token, { httpOnly: true, maxAge: maxAge * 1000 })
                         total = total - coupon.couponValue;
+                        res.cookie('coupon', token, { httpOnly: true, maxAge: maxAge * 1000 });
                         res.json({ total, discountvalue });
+                       
+                      
 
                     } else {
                         res.json(`The total amount must be between $ ${coupon.minAmount}.00 and $ ${coupon.maxAmount}.00 to use this Coupon`)
+                        
                     }
 
                 } else {
-                    coupon.userid.forEach(async (user) => {
-
-                        if (user == userId) {
-                            console.log("exist");
-                            res.json("Coupon already used")
-                        } else {
-                            if (total >= coupon.minAmount && total <= coupon.maxAmount) {
-                                let token = createToken(couponcode);
-                                res.cookie('coupon', token, { httpOnly: true, maxAge: maxAge * 1000 })
-                                total = total - coupon.couponValue;
-                                res.json({ total, discountvalue });
-
-                            } else {
-                                res.json(`The total amount must be between ${coupon.minAmount} and ${coupon.maxAmount} to use this Coupon`)
-                            }
+                    const useridexist = coupon.userid.map(async (user) => {
+                        if(user==userId){
+                            return user;
                         }
 
                     })
+
+                        if (useridexist) {
+                            console.log("exist");
+                            
+                            res.json("Coupon already used");
+                            console.log(1234560987654);
+                           return;
+                          
+                        } 
+                         if (total >= coupon.minAmount && total <= coupon.maxAmount) {
+                                let token = createToken(couponcode);
+                                total = total - coupon.couponValue;
+                                res.cookie('coupon', token, { httpOnly: true, maxAge: maxAge * 1000 })
+                                res.json({ total, discountvalue });
+                              
+                               
+
+                            } else {
+                                res.json(`The total amount must be between ${coupon.minAmount} and ${coupon.maxAmount} to use this Coupon`)
+                               
+                            }
+                        
+
+                
                 }
             }
         } else {
-            res.json("Invalid coupon")
+            res.json("Invalid coupon");
+
         }
 
 

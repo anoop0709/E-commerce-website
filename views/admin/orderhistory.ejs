@@ -1,6 +1,7 @@
 <section>
     <div  class=" container ordersection">
-        <form action="/sortorders" method="post">
+   
+        <form action="/sortorders" method="post" class="text-right p-0">
             <select type="button" class="btn btn-danger mx-3" name="orderStatus">
                 <option value="">Status</option>
                 <option value="all">All</option>
@@ -10,30 +11,13 @@
                 <option value="placed">Placed Orders</option>
                 <option value="pending">Pending Orders</option>
   
-  
+       
   
             </select>  
-            <!-- <select type="button" class="btn btn-danger" name="brand">
-               
-                <option value="">Brand</option>
-                <option value="all">All</option>
-                <option value="Rayban">Rayban</option> 
-                <option value="Kennethcole">Kennethcole</option>
-                <option value="Police">Police</option>
-                <option value="Fossil">Fossil</option>
-                <option value="Opium">Opiumr</option>
-                <option value="Farenheit">Farenheit</option>
-            </select>   -->
-            <!-- <label for="fromdate" class="h6 mx-2">From</label>
-            <input type="date" name="datefrom">
-            <label for="fromdate" class="h6 mx-2">To</label>
-            <input type="date" name="dateto"> -->
-
-
             <button type="submit" class="btn btn-dark mx-5">Sort Orders</button>       
         </form>
     </div>
-    <div class="container mx-auto ordersection">
+    <div class="container mx-auto orders">
         <% order.forEach((order)=>{ %>
         <div class="col-md-9 mb-5 mt-5 p-0" id="<%= order._id %>">
            <div class="col-md-12 border p-5 shadow-sm p-3 mb-5 bg-body rounded">
@@ -128,13 +112,40 @@
            
         </div>
         <% }) %>
-    
+        <div class="col-md-12 text-right">
+            <nav aria-label="Page navigation example" class="text-center ">
+                <ul class="pagination text-center">
+                  <li class="page-item">
+                    <a class="page-link text-dark" href="#" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item"><a class="page-link text-dark"  href="/orderhistory/?page=1">1</a></li>
+                  <li class="page-item"><a class="page-link text-dark"  href="/orderhistory/?page=2">2</a></li>
+                  <li class="page-item"><a class="page-link text-dark" href="/orderhistory/?page=3">3</a></li>
+                  <li class="page-item"><a class="page-link text-dark" href="/orderhistory/?page=4">4</a></li>
+                  <li class="page-item">
+                    <a class="page-link text-dark" href="#" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            </section>
       
 </section>
 <style>
     .ordersection{
         position: relative;
-        margin-top: 100px;
+        margin-top: 200px;
+        left: 50%;
+        transform: translateX(-50%);
+
+    }
+    .orders{
+        position: relative;
+        margin-top: 50px;
         left: 50%;
         transform: translateX(-50%);
 

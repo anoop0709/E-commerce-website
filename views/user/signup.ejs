@@ -112,7 +112,7 @@ const phoneError = document.querySelector('.phone');
 
     const fname = form.fname.value;
     const email = form.email.value;
-    const password = form.password.value;
+    const newpassword = form.password.value;
     const phone = form.phone.value;
    
 
@@ -120,7 +120,7 @@ const phoneError = document.querySelector('.phone');
     try{
         const res = await fetch('/signup',{
             method:'POST',
-            body:JSON.stringify({fname,email,password,phone}),
+            body:JSON.stringify({fname,email,newpassword,phone}),
             headers : {'Content-Type':'application/json'}
 
         });

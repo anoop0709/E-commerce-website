@@ -20,12 +20,12 @@
                     <a href="#">Total Users</a>
                 </div>
             </div>
-            <div class="chart d-flex flex-column">
-                <canvas id="myChart"></canvas>
-                <canvas id="lineChart"></canvas>
+            <div class="chart">
+                <canvas id="myChart" class=""></canvas>
+                <canvas id="lineChart" class="mx-3"></canvas>
             </div>
 
-            <div style="margin-left: 50%;margin-bottom:100px;margin-top: 100px;">
+            <div style="margin-bottom:100px;margin-top: 100px;" class="text-right">
                 <button class="logout btn-dark text-white " id="download-pdf">Download
                     pdf</button>
         
@@ -52,10 +52,11 @@
         }
         </script>
     <script>
-        var xValues = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        var yValues = [550, 490, 1440, 1240, 1500, 990, 1100, 600];
-        let yValue2 = [220, 880, 770, 1400, 1300, 1100, 280];
-        let yValue3 = [550, 490, 1440, 1240, 1500, 990, 1100, 600];
+        const totalrevenue = document.getElementById('Single').textContent
+        const totalorder = document.getElementById('Single1').textContent
+        const totaluser = document.getElementById('Single2').textContent
+        console.log(totalrevenue,totalorder,totaluser);
+        var xValues = ["Total"];
         var barColors = ["#ec8888"];
         let barColors2 = ["#6bcbe0"];
         let barColors3 = ["#56dead"];
@@ -65,18 +66,18 @@
             data: {
                 labels: xValues,
                 datasets: [{
-                    label: "Total Sales",
+                    label: "Total revenue",
                     backgroundColor: barColors,
-                    data: yValues
+                    data: totalrevenue
                 }, {
-                    label: "Total Revenue",
+                    label: "Total orders",
                     backgroundColor: barColors2,
-                    data: yValue2
+                    data: totalorder
 
                 }, {
                     label: "Total Users",
                     backgroundColor: barColors3,
-                    data: yValue3
+                    data: totaluser
                 }],
                 options: {
                     legend: { display: true },
@@ -90,25 +91,25 @@
 
     </script>
     <script>
-        var xValues = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+       var xValues = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
         new Chart("lineChart", {
             type: "line",
             data: {
                 labels: xValues,
                 datasets: [{
-                    label: "Total sales",
-                    data: [860, 1140, 1060, 1060, 1070, 1110, 1330, 2210, 7830, 2478],
+                    label: "Total revenue",
+                    data: totalrevenue,
                     borderColor: "#ec8888",
                     fill: false
                 }, {
-                    label: "Total Revenue",
-                    data: [1600, 1700, 1700, 1900, 2000, 2700, 4000, 5000, 6000, 7000],
+                    label: "Total orders",
+                    data: totalorder,
                     borderColor: "#6bcbe0",
                     fill: false
                 }, {
                     label: "Total Users",
-                    data: [300, 700, 2000, 5000, 6000, 4000, 2000, 1000, 200, 100],
+                    data: totaluser,
                     borderColor: "#56dead",
                     fill: false
                 }]
@@ -135,9 +136,9 @@
 
                 // keep track canvas position
                 var pdfctx = $(pdfCanvas)[0].getContext('2d');
-                var pdfctxX = 0;
-                var pdfctxY = 0;
-                var buffer = 100;
+                var pdfctxX = 100;
+                var pdfctxY = 100;
+                var buffer = 200;
 
                 // for each chart.js chart
                 $("canvas").each(function (index) {

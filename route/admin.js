@@ -35,7 +35,7 @@ router.post('/addcoupon',authMiddleware.checkAdmin,adminHelper.add_coupon);
 router.get('/editcoupon/:id',authMiddleware.checkAdmin,adminHelper.edit_coupon);
 router.post('/editcoupon/:id',authMiddleware.checkAdmin,adminHelper.update_coupon);
 router.get('/deletecoupon/:id',authMiddleware.checkAdmin,adminHelper.delete_coupon);
-router.post('/searchcoupon',authMiddleware.checkAdmin,adminHelper.search_coupon);
+router.post('/searchcoupon',authMiddleware.checkAdmin,adminHelper.search_coupon)
 
 
 

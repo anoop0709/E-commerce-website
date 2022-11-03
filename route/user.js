@@ -48,7 +48,8 @@ router.get('/addressdelete/:id/:address',authMiddleware.checkUser,userhelper.del
 //user account routes--->
 
 //shop page-->
-router.get('/shop',authMiddleware.checkUser,userhelper.get_shop_page)
+router.get('/shop',authMiddleware.checkUser,userhelper.get_shop_page);
+router.post('/searchproducts',authMiddleware.checkUser,userhelper.search_product);
 router.get('/wishlist/:id',authMiddleware.checkUser,userhelper.get_wishlist)
 router.post('/wishlist',authMiddleware.checkUser,userhelper.addTo_wishlist);
 router.post('/carttowishlist',authMiddleware.checkUser,userhelper.wishlist_to_cart);
@@ -64,7 +65,7 @@ router.get('/cart/:id',authMiddleware.checkUser,userhelper.cart_page);
 router.post('/cart',authMiddleware.checkUser,userhelper.add_to_cart);
 
 router.post('/qtyincrement',authMiddleware.checkUser,userhelper.qty_increment);
-router.get('/deletecartproduct/:id/:userid',authMiddleware.checkUser,userhelper.delete_cart_product);
+router.get('/deletecartproduct/:id/:userid/:total',authMiddleware.checkUser,userhelper.delete_cart_product);
 
 //place order
 

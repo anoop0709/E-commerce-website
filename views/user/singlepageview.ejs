@@ -4,7 +4,7 @@
 
             <ul class="short">
                 <li>
-                    <a href="/shop/<%= user._id %>">Shop</a>
+                    <a href="/shop">Shop</a>
                     <i>|</i>
                 </li>
                 <li>Single view</li>
@@ -83,8 +83,10 @@
                                     </div>
                                 </div>
                             </div>
+                            <% if(locals.user){ %>
             
                                 <div class="d-none" ><input type="text" id="user" value="<%= user._id %>"></div>
+                                <% } %>
                                 <div class="d-none" ><input type="text" id="product" value="<%= productdetails._id %>"></div>
                             
                             </div>
@@ -312,7 +314,7 @@ let imgbox = document.querySelector('.img-bx');
   glass.style.backgroundRepeat = "no-repeat";
   glass.style.backgroundSize =
     img.width * zoom + "px " + img.height * zoom + "px";
-  bw = 3;
+  bw = 2;
   w = glass.offsetWidth / 3;
   h = glass.offsetHeight / 3;
 

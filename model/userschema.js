@@ -52,19 +52,18 @@ const userSchema = new mongoose.Schema({
     }
 
 }) 
-userSchema.pre('save',async function (next){
-const salt = await bcrypt.genSalt();
-this.password = await bcrypt.hash(this.password,salt);
-    next();
-})
+
 
 userSchema.statics.login = async function (email,password) {
     const user = await this.findOne({email:email});
     
     if(user){
         if(user.isVerified == true){
+            console.log(123456);
         const auth = await bcrypt.compare(password,user.password);
+        console.log(auth);
         if(auth){
+            console.log(7654321)
             if(user.isBlocked == false){
                 
                 return user;

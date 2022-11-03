@@ -84,7 +84,7 @@ module.exports = {
         let totalRevenue = 0;
         let totalOrder = 0;
         const user  = await User.find({});
-        const product = await Order.find({});
+        const product = await Order.find({})
         user.forEach((el)=>{
             userCount++;
 
@@ -208,7 +208,11 @@ module.exports = {
 
     },
     order_history: async (req,res)=>{
-        const order = await Order.find();
+        let limit = 10;
+        //let skip = page*9;
+        let page = req.query.page >= 1 ? req.query.page : 1;
+        page = page-1;
+        const order = await Order.find().sort({"orderDate":-1}).limit(10).skip(page*limit);;
         console.log(order);
         let date =  order.map((order)=>{
             return order.orderDate.toLocaleString();
@@ -286,7 +290,7 @@ module.exports = {
         let couponid = req.params.id;
         let coupon = await Coupon.findOne({_id:couponid});
         console.log(coupon);
-        res.render('./admin/editcoupon',{coupon,layout:'adminlayout'})
+        res.render('./admin/editcoupon',{coupon,layout:'adminlayout'});
     },
     delete_coupon:async (req,res)=>{
 
