@@ -2,7 +2,10 @@ const Admin = require('../model/adminSchema');
 const User = require('../model/userschema');
 const Product = require('../model/productschema');
 const Order = require('../model/orderschema');
-const Coupon = require('../model/couponschema')
+const Refund = require('../model/refundSchema');
+const Coupon = require('../model/couponschema');
+const Razorpay = require('razorpay');
+const instance = new Razorpay({ key_id: 'rzp_test_8rQGV8fr9QRNn8', key_secret: '0iA8p66fFN3Du3Pzl01fcg00' })
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const fs = require('fs');
@@ -11,25 +14,25 @@ const { REFUSED } = require('dns');
 
 
 //signup error handling
-const handleErrors = (err)=>{
+const handleErrors = (err) => {
 
-    let Error = {fname:'',email:'',password:''};
+    let Error = { fname: '', email: '', password: '' };
     console.log(err.message);
-    
-    
-    if(err.code === 11000){
+
+
+    if (err.code === 11000) {
         Error.email = 'This email is already registered';
         return Error;
     }
-  
 
-    if(err.message.includes('admin validation failed')){
-       
+
+    if (err.message.includes('admin validation failed')) {
+
         Object.values(err.errors).forEach(error => {
-         console.log(error.properties.path);
-          Error[error.properties.path] = error.properties.message;
+            console.log(error.properties.path);
+            Error[error.properties.path] = error.properties.message;
 
-      }); 
+        });
 
     }
     console.log(Error);
@@ -40,17 +43,17 @@ const handleErrors = (err)=>{
 
 let maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
-   return jwt.sign({ id },process.env.jwtSecretKey,{ expiresIn:maxAge })
+    return jwt.sign({ id }, process.env.jwtSecretKey, { expiresIn: maxAge })
 }
 
-const handleLoginErrors = (err)=>{
-    let Error = {email:'',password:''};
+const handleLoginErrors = (err) => {
+    let Error = { email: '', password: '' };
     console.log(err);
-    if(err.message === 'Admin not registered'){
+    if (err.message === 'Admin not registered') {
         Error.email = 'Email not registered';
 
     }
-    if(err.message === 'Incorrect password'){
+    if (err.message === 'Incorrect password') {
         Error.email = 'Incorrect password';
     }
     return Error;
@@ -59,93 +62,93 @@ const handleLoginErrors = (err)=>{
 
 
 module.exports = {
-    admin_getlogin:(req,res)=>{
-        res.render('./admin/adminlogin',{layout:"adminlayout"})
+    admin_getlogin: (req, res) => {
+        res.render('./admin/adminlogin', { layout: "adminlayout" })
     },
-    admin_dologin:async (req,res)=>{
+    admin_dologin: async (req, res) => {
         console.log(req.body);
-        const {email,password} = req.body;
-        try{
-            let admin = await Admin.login(email,password);
+        const { email, password } = req.body;
+        try {
+            let admin = await Admin.login(email, password);
             let adminToken = createToken(admin.id);
-            res.cookie('admin', adminToken , {httpOnly:true, maxAge:maxAge * 1000})
+            res.cookie('admin', adminToken, { httpOnly: true, maxAge: maxAge * 1000 })
             console.log(admin);
-            res.json({admin})
-        }catch(err){
-            const errors =handleLoginErrors(err);
-            res.json({errors})
-        
+            res.json({ admin })
+        } catch (err) {
+            const errors = handleLoginErrors(err);
+            res.json({ errors })
+
         }
-        
+
 
     },
-    admin_home: async (req,res)=>{
+    admin_home: async (req, res) => {
         let userCount = 0;
         let totalRevenue = 0;
         let totalOrder = 0;
-        const user  = await User.find({});
+        const user = await User.find({});
         const product = await Order.find({})
-        user.forEach((el)=>{
+        user.forEach((el) => {
             userCount++;
 
         })
-        product.forEach((el)=>{
+        product.forEach((el) => {
             totalOrder++;
             let total = parseInt(el.order.total);
             totalRevenue = totalRevenue + total;
         })
 
-        res.render('./admin/adminhome',{layout:"adminlayout",userCount,totalRevenue,totalOrder})
+        res.render('./admin/adminhome', { layout: "adminlayout", userCount, totalRevenue, totalOrder })
     },
-    add_admin:(req,res)=>{
-        res.render('./admin/addadmin',{layout:"adminlayout"})
+    add_admin: (req, res) => {
+        res.render('./admin/addadmin', { layout: "adminlayout" })
 
     },
-    admin_signup: async (req,res)=>{
+    admin_signup: async (req, res) => {
         console.log(req.body);
-        const {fname,email,password} = req.body;
+        const { fname, email, password } = req.body;
         console.log(fname);
-       
 
-        try{
-            const admin = await Admin.create({fname,email,password});
-            res.json({admin});
-        }catch(err){
-            
+
+        try {
+            const admin = await Admin.create({ fname, email, password });
+            res.json({ admin });
+        } catch (err) {
+
             const errors = handleErrors(err);
-             res.json({errors});
+            res.json({ errors });
         }
     },
 
-    admin_logout:(req,res)=>{
-        res.cookie('admin','',{maxAge:1})
+    admin_logout: (req, res) => {
+        res.cookie('admin', '', { maxAge: 1 })
         res.redirect('/admin');
 
     },
-    view_users:async (req,res)=>{
+    view_users: async (req, res) => {
         let users = await User.find({}).lean();
         console.log(users);
-        res.render('./admin/users',{users,layout:'adminlayout'});
+        res.render('./admin/users', { users, layout: 'adminlayout' });
 
     },
-    block_user: async (req,res)=>{
+    block_user: async (req, res) => {
         let userId = req.params.id;
         console.log(userId);
-        let user = await User.findByIdAndUpdate({_id:userId},{isBlocked:true})
+        let user = await User.findByIdAndUpdate({ _id: userId }, { isBlocked: true })
         res.redirect('/userlist')
     },
-    unblock_user: async (req,res)=>{
+    unblock_user: async (req, res) => {
         let userId = req.params.id;
         console.log(userId);
-        let user = await User.findByIdAndUpdate({_id:userId},{isBlocked:false})
+        let user = await User.findByIdAndUpdate({ _id: userId }, { isBlocked: false })
         res.redirect('/userlist')
     },
-    get_product_page:(req,res)=>{
-        res.render('./admin/addproduct',{layout:'adminlayout'})
+    get_product_page: (req, res) => {
+        res.render('./admin/addproduct', { layout: 'adminlayout' })
     },
 
-    add_product:async (req,res)=>{
-       // let products = req.body;
+    add_product: async (req, res) => {
+        // let products = req.body;
         console.log(req.body);
         const productname = req.body.productname;
         const productdescription = req.body.productdescription;
@@ -154,30 +157,30 @@ module.exports = {
         const qty = req.body.qty;
         const isfeatured = req.body.isfeatured
         const productcategory = {
-            shape:req.body.shape,
-            frametype:req.body.frametype,
-            color:req.body.color,
-            gender:req.body.gender
+            shape: req.body.shape,
+            frametype: req.body.frametype,
+            color: req.body.color,
+            gender: req.body.gender
         }
         console.log(req.body.frametype);
-        console.log(productname,productdescription,brand,price,qty,isfeatured,productcategory);
-       let product =  await Product.create({productname,productdescription,brand,price,qty,productcategory})
-       try{
-        let image = req.files.image;
-        image.mv('./public/image/'+product._id +".jpeg");
-         res.redirect('/addproduct')
-       }catch(err){
-           console.log(err);
-       }
-      
+        console.log(productname, productdescription, brand, price, qty, isfeatured, productcategory);
+        let product = await Product.create({ productname, productdescription, brand, price, qty, productcategory })
+        try {
+            let image = req.files.image;
+            image.mv('./public/image/' + product._id + ".jpeg");
+            res.redirect('/addproduct')
+        } catch (err) {
+            console.log(err);
+        }
+
     },
-    edit_product:async (req,res)=>{
+    edit_product: async (req, res) => {
         let proId = req.params.id;
-        let product = await Product.findOne({_id: proId});
+        let product = await Product.findOne({ _id: proId });
         console.log(product);
-        res.render('./admin/editproduct',{product,layout:'adminlayout'})
+        res.render('./admin/editproduct', { product, layout: 'adminlayout' })
     },
-    update_product: async(req,res)=>{
+    update_product: async (req, res) => {
         let proid = req.params.id;
         const productname = req.body.productname;
         const productdescription = req.body.productdescription;
@@ -185,52 +188,52 @@ module.exports = {
         const price = req.body.price;
         const qty = req.body.qty;
         const productcategory = {
-            shape:req.body.shape,
-            frametype:req.body.frametype,
-            color:req.body.color,
-            gender:req.body.gender
+            shape: req.body.shape,
+            frametype: req.body.frametype,
+            color: req.body.color,
+            gender: req.body.gender
         }
         console.log(proid);
-        let product = await Product.findOneAndUpdate({_id:proid},{productname,productdescription,brand,price,qty,productcategory})
+        let product = await Product.findOneAndUpdate({ _id: proid }, { productname, productdescription, brand, price, qty, productcategory })
         res.redirect('/productlist');
-        
-    },
-    delete_product:async (req,res)=>{
-
-    let proid = req.params.id;
-   let deletedproduct =  await Product.findByIdAndDelete({_id:proid});
-    res.redirect('/productlist');
-    fs.unlink("./public/image/" + proid +".jpeg",(err)=>{
-        console.log(err);
-    })
-
-
 
     },
-    order_history: async (req,res)=>{
+    delete_product: async (req, res) => {
+
+        let proid = req.params.id;
+        let deletedproduct = await Product.findByIdAndDelete({ _id: proid });
+        res.redirect('/productlist');
+        fs.unlink("./public/image/" + proid + ".jpeg", (err) => {
+            console.log(err);
+        })
+
+
+
+    },
+    order_history: async (req, res) => {
         let limit = 10;
         //let skip = page*9;
         let page = req.query.page >= 1 ? req.query.page : 1;
-        page = page-1;
-        const order = await Order.find().sort({"orderDate":-1}).limit(10).skip(page*limit);;
+        page = page - 1;
+        const order = await Order.find().sort({ "orderDate": -1 }).limit(10).skip(page * limit);;
         console.log(order);
-        let date =  order.map((order)=>{
+        let date = order.map((order) => {
             return order.orderDate.toLocaleString();
         })
         console.log(date);
-        res.render('./admin/orderhistory',{order,layout:'adminlayout',date})
+        res.render('./admin/orderhistory', { order, layout: 'adminlayout', date })
     },
-    order_status_change:async (req,res)=>{
+    order_status_change: async (req, res) => {
         const orderid = req.params.id;
         const orderstatus = req.body.orderStatus;
-        console.log(req.body.orderStatus+"hai");
-        console.log(orderid+"hello");
+        console.log(req.body.orderStatus + "hai");
+        console.log(orderid + "hello");
 
-        let orderstatuschange = await Order.findByIdAndUpdate({_id:orderid},{$set:{"order.status":orderstatus}});
+        let orderstatuschange = await Order.findByIdAndUpdate({ _id: orderid }, { $set: { "order.status": orderstatus } });
         res.redirect('/orderhistory');
     },
 
-    sort_order:async (req,res)=>{
+    sort_order: async (req, res) => {
         console.log(req.body);
         const datefrom = req.body.datefrom;
         const dateto = req.body.dateto;
@@ -238,78 +241,111 @@ module.exports = {
         let orderStatus = req.body.orderStatus;
 
         const data = await Order.find();
-        let date =  data.map((data)=>{
+        let date = data.map((data) => {
             return data.orderDate.toLocaleString();
         })
-       let order =  data.filter((el)=>{ 
-            if(el.order.status == orderStatus || orderStatus == 'all'){
+        let order = data.filter((el) => {
+            if (el.order.status == orderStatus || orderStatus == 'all') {
                 return el;
             }
-          
 
-           
+
+
         });
-        res.render('./admin/orderhistory',{order,layout:'adminlayout',date});
-      
-        
+        res.render('./admin/orderhistory', { order, layout: 'adminlayout', date });
 
-       
+
+
+
 
     },
-    coupon_page:(req,res)=>{
-        res.render('./admin/addcoupon',{layout:'adminlayout'})
+    coupon_page: (req, res) => {
+        res.render('./admin/addcoupon', { layout: 'adminlayout' })
     },
-    add_coupon:async (req,res)=>{
+    add_coupon: async (req, res) => {
 
         const coupon = req.body.coupon;
         const value = req.body.couponValue;
         const maxvalue = req.body.maxValue;
         const minvalue = req.body.minValue;
         console.log(req.body);
-        const couponcode = await Coupon.create({coupon:coupon,couponValue:value,maxAmount:maxvalue,minAmount:minvalue});
+        const couponcode = await Coupon.create({ coupon: coupon, couponValue: value, maxAmount: maxvalue, minAmount: minvalue });
         res.redirect('/coupon')
 
     },
-    get_all_coupon:async (req,res)=>{
+    get_all_coupon: async (req, res) => {
 
         const couponcode = await Coupon.find({});
         console.log(couponcode);
-        res.render('./admin/couponpage',{layout:'adminlayout',couponcode})
+        res.render('./admin/couponpage', { layout: 'adminlayout', couponcode })
     },
-    update_coupon: async(req,res)=>{
+    update_coupon: async (req, res) => {
         let couponid = req.params.id;
         const coupon = req.body.coupon;
         const value = req.body.couponValue;
         const maxvalue = req.body.maxValue;
         const minvalue = req.body.minValue;
-        let couponcode =  await Coupon.findOneAndUpdate({_id:couponid},{coupon:coupon,couponValue:value,maxAmount:maxvalue,minAmount:minvalue})
+        let couponcode = await Coupon.findOneAndUpdate({ _id: couponid }, { coupon: coupon, couponValue: value, maxAmount: maxvalue, minAmount: minvalue })
         res.redirect('/coupon');
-        
+
     },
-    edit_coupon:async (req,res)=>{
+    edit_coupon: async (req, res) => {
         let couponid = req.params.id;
-        let coupon = await Coupon.findOne({_id:couponid});
+        let coupon = await Coupon.findOne({ _id: couponid });
         console.log(coupon);
-        res.render('./admin/editcoupon',{coupon,layout:'adminlayout'});
+        res.render('./admin/editcoupon', { coupon, layout: 'adminlayout' });
     },
-    delete_coupon:async (req,res)=>{
+    delete_coupon: async (req, res) => {
 
         let couponid = req.params.id;
-       let deletedcoupon =  await Coupon.findByIdAndDelete({_id:couponid});
+        let deletedcoupon = await Coupon.findByIdAndDelete({ _id: couponid });
         res.redirect('/coupon');
-        },
-    search_coupon:async (req,res)=>{
-            const code = req.body.couponcode;
-            const coupons = await Coupon.find({});
-            let couponcode = [];
-                  couponcode  = coupons.filter((el)=>{
-                if(el.coupon == code){
-                    return el;
-                }
+    },
+    search_coupon: async (req, res) => {
+        const code = req.body.couponcode;
+        const coupons = await Coupon.find({});
+        let couponcode = [];
+        couponcode = coupons.filter((el) => {
+            if (el.coupon == code) {
+                return el;
+            }
 
-            })
-            console.log(couponcode+"hello coupon");
-            res.render('./admin/couponpage',{layout:'adminlayout',couponcode});
-        }
+        })
+        console.log(couponcode + "hello coupon");
+        res.render('./admin/couponpage', { layout: 'adminlayout', couponcode });
+    },
+    get_cancelorder_request: async (req, res) => {
+        const refund = await Refund.find({});
+        res.render('./admin/ordercancelrequest', { layout: 'adminlayout', refund })
+    },
+    do_refund: async (req, res) => {
+        console.log(req.body);
+        const orderId = req.body.orderid;
+        const refundId = req.body.refundid;
+        const paymentId = req.body.paymentid;
+        const refundAmount = req.body.amount;
+        let response;
+        const targetedrefund = await Refund.findOne({_id:refundId});
+        const targetedorder = await Order.findOne({_id:orderId});
+        console.log(targetedrefund);
+    try{
+          response = await instance.payments.refund(paymentId,{
+                "amount": refundAmount * 100,
+                "speed":"normal",
+                "receipt": "" + orderId
+            
+            });
+            console.log(response);
+    }catch(err){
+        console.log(err);
+    }
+
+    if(response){
+        await targetedorder.updateOne({$set:{refund:true,"order.status":"canceled"}});
+       const delres = await  Refund.findByIdAndDelete({_id:refundId});
+       res.json(delres);
+
+    }
+}
 
 }

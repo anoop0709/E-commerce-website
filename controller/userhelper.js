@@ -17,6 +17,7 @@ const instance = new Razorpay({ key_id: 'rzp_test_8rQGV8fr9QRNn8', key_secret: '
 const crypto = require('crypto');
 const humandate = require('human-date');
 const Coupon = require('../model/couponschema');
+const Refund = require('../model/refundSchema');
 
 
 function generateRazorpay(orderId, total, userid) {
@@ -355,19 +356,19 @@ let products = await Product.find({});
 
     },
     search_product:async (req,res)=>{
-        console.log(req.body);
         const brand = req.body.brand;
         const price = req.body.price;
         let price1, minprice1, maxprice1;
-        if(price != "all"){
+        if(price != "All"){
         price1 = price.split("-");
          minprice1 = price1[0];
          maxprice1= price1[1];
         }
+        const searchCriteria = req.body;
+        console.log(searchCriteria);
        
         const minprice = Number(minprice1);
         const maxprice = Number(maxprice1);
-        console.log(minprice,maxprice);
         const shape = req.body.shape;
         const frametype = req.body.frametype;
         const color = req.body.color;
@@ -375,20 +376,13 @@ let products = await Product.find({});
        
         let product = await Product.find({});
         let products = product.filter((el)=>{
-            if(el.brand == brand || brand == "all"){
-                console.log(122);
-                if((el.price >= minprice && el.price <= maxprice )|| price == "all"){
-                    console.log(1);
-                    if(el.productcategory.shape == shape || shape == "all"){
-                        console.log(2);
-                        if(el.productcategory.frametype == frametype || frametype == "all" ){
-                            console.log(3);
-                            if(el.productcategory.color == color || color == "all" ){
-                                console.log(4);
-                                if(el.productcategory.gender == gender || gender == "all" ){
-                                    console.log(5);
+            if(el.brand == brand || brand == "All"){
+                if((el.price >= minprice && el.price <= maxprice )|| price == "All"){
+                    if(el.productcategory.shape == shape || shape == "All"){
+                        if(el.productcategory.frametype == frametype || frametype == "All" ){
+                            if(el.productcategory.color == color || color == "All" ){
+                                if(el.productcategory.gender == gender || gender == "All" ){
                                     return el;
-
                                 }
                             
                             }
@@ -398,8 +392,7 @@ let products = await Product.find({});
             }
             
         })
-        console.log(products);
-        res.render('./user/shop', { layout: 'layout', products })
+        res.render('./user/shop', { layout: 'layout', products,searchCriteria})
     },
     single_view: async (req, res) => {
         let productid = req.params.id;
@@ -411,8 +404,8 @@ let products = await Product.find({});
     },
 
     cart_page: async (req, res) => {
-        let userid = req.params.id;
-        let user = await User.findOne({ _id: userid });
+        const userid = req.params.id;
+        const user = await User.findOne({ _id: userid });
         let cartlength = 0;
         let total = 0;
         let coupon;
@@ -571,6 +564,7 @@ let products = await Product.find({});
         let userid = req.params.userid
         let total = req.params.total
         const user = await User.findOne({ _id: userid });
+        let minvalue;
         let cartproduct = {};
         user.cart.forEach((el) => {
             if (el.product._id == productid) {
@@ -591,9 +585,10 @@ let products = await Product.find({});
             })
         }
         console.log(sessioncoupon);
+        if(sessioncoupon){
         const targetedcoupon = await Coupon.findOne({coupon:sessioncoupon.id})
-        const minvalue = targetedcoupon.minAmount;
-       
+           minvalue = targetedcoupon.minAmount;
+        }
 
         await User.updateOne({ _id: userid }, { $pull: { cart: cartproduct } });
         let cartlength = 0;
@@ -869,7 +864,7 @@ let products = await Product.find({});
 
         })
     },
-    changepaymentstatus: async (orderId, userId) => {
+    changepaymentstatus: async (orderId, userId,orderobj) => {
         console.log(orderId + "hai order id ");
         let productid = {};
 
@@ -898,6 +893,10 @@ let products = await Product.find({});
                     targetedProduct.qty = targetedProduct.qty - el.qty;
                     targetedProduct.save();
                 })
+                const paymentid = orderobj.payment.razorpay_payment_id;
+                console.log(paymentid);
+             await Order.findByIdAndUpdate({_id:orderId},{$set:{transactionid:paymentid}});
+              
 
             }).catch((err) => {
                 console.log(err);
@@ -908,12 +907,46 @@ let products = await Product.find({});
     },
     view_order: async (req, res) => {
         let userid = req.params.userid
+        
         let order = await Order.find({ user: userid }).sort({"orderDate":-1});
+        const refund = await Refund.find({});
+      
+       
+        
         let date =  order.map((order)=>{
             return order.orderDate.toLocaleString();
         })
        // let date = humandate.prettyPrint(order.orderDate);
-        res.render('./user/vieworder', { layout: 'layout', order, date })
+        res.render('./user/vieworder', { layout: 'layout', order,refund,date})
+    },
+
+
+    get_refund_page:async (req,res)=>{
+        const orderid = req.params.orderid;
+        const orders = await Order.findOne({_id:orderid});
+        console.log(orders);
+        res.render('./user/ordercancelpage',{orders,layout:'layout'});
+
+    },
+
+    intiate_refund:async (req,res)=>{
+        const orderid = req.params.orderid;
+        const userid = req.params.userid;
+        console.log(req.body);
+        const Totalamount = req.body.tamount;
+        const reason = req.body.reason;
+        const fname = req.body.fullname;
+        const email = req.body.email
+
+        const order = await Order.findOne({_id:orderid});
+        const transactionid = order.transactionid;
+        const refundreq = await Refund.create({fname:fname,email:email,user:userid,refundAmount:Totalamount,orderid:orderid,reason:reason,transactionid:transactionid});
+        res.render('./user/refundprocessing', { layout: 'layout', order,refundreq})
+    
+
+
+         
+
     },
 
     apply_coupon: async (req, res) => {

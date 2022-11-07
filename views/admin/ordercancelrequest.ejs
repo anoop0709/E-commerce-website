@@ -1,0 +1,83 @@
+</section>
+<div class="heading">
+    <h2>Order cancel requests</h2>
+</div>
+
+<section class="tproduct">
+    <div class="productmenu">
+        <div class="menu-btn">
+            <!-- <div>
+                <a class="edit text-white" href="edituser.html">Edit</a>
+            </div>
+            <div>
+                
+            </div> -->
+           
+        </div>
+        
+        <div class="srch">
+            <input type="text" id="productsearch">
+            <button type="button" class="srchbtn">search</button>
+
+        </div>
+    </div>
+
+
+<!--Table-->
+<table class="table table-striped td table align-middle">
+
+<!--Table head-->
+<thead>
+<tr>
+<th>User Name</th>
+<th>Email</th>
+<th>Reason</th>
+<th>Refund Amount</th>
+<th>Payment id</th>
+<th>Order Date</th>
+<th></th>
+
+
+</tr>
+</thead>
+<!--Table head-->
+
+<!--Table body-->
+<% refund.forEach((refund) => { %>
+<tbody>
+<tr class="table-info">
+<td scope="row"><%= refund.fname %></td>
+<td><%= refund.email %></td>
+<td><%= refund.reason %></td>
+<td><%= refund.refundAmount %></td>
+<td><%= refund.transactionid %></td>
+<td><%= refund.refundDate.toLocaleString() %></td>
+<td><a href="" onclick="giverefund('<%= refund.orderid %>','<%= refund._id %>','<%= refund.transactionid %>','<%= refund.refundAmount %>')" class="btn btn-danger"> Refund </a></td>
+
+</tr>
+
+</tbody>
+<!--Table body-->
+<% } ) %>
+
+</table>
+<div id="response" class="text-success"></div>
+<!--Table-->
+</section>
+<script>
+    const resdiv = document.getElementById('response')
+  async  function giverefund(orderid,refundid,paymentid,amount){
+
+    let response = await fetch('/cancelrequest',{
+             method:'POST',
+            body:JSON.stringify({orderid,refundid,paymentid,amount}),
+            headers : {'Content-Type':'application/json'}
+    })
+    const res = await response.json();
+    console.log(res);
+if(res){
+resdiv.textContent = res;
+location.reload();
+}
+    }
+</script>

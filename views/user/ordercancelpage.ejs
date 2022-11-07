@@ -1,0 +1,31 @@
+<section class="addproduct">
+    <div class="container col-md-3 mb-5 pb-5 mt-5">
+        <form action="/refund/<%= orders._id %>/<%= orders.user %>" method="post">
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" name="fullname">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="text" class="form-control" name="email" >
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Please select the reason for refund</label>
+               <select name="reason">
+                   <option value="damage">Product Damaged</option>
+                   <option value="notfit">Product not fit</option>
+                   <option value="color">Product color not match</option>
+                   <option value="changemind">Change your mind</option>
+                   <option value="other">Other reason</option>
+               </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Total Amount to be refunded </label>
+                <input type="text" class="form-control" name="tamount" value="<%= orders.order.total %>.00" readonly>
+            </div>
+           
+            <button type="submit" class="btn btn-dark text-white mt-4 mb-4 ">Request refund</button>
+        </form>
+    </div>
+</div>
+</section>

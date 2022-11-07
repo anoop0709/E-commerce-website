@@ -27,7 +27,8 @@ router.get('/deleteproduct/:id',authMiddleware.checkAdmin,adminHelper.delete_pro
 router.get('/orderhistory',authMiddleware.checkAdmin,adminHelper.order_history);
 router.post('/changeorderstatus/:id',authMiddleware.checkAdmin,adminHelper.order_status_change);
 router.post('/sortorders',authMiddleware.checkAdmin,adminHelper.sort_order);
-
+router.get('/cancelrequest',authMiddleware.checkAdmin,adminHelper.get_cancelorder_request);
+router.post('/cancelrequest',authMiddleware.checkAdmin,adminHelper.do_refund);
 //coupon
 router.get('/coupon',authMiddleware.checkAdmin,adminHelper.get_all_coupon)
 router.get('/addcoupon',authMiddleware.checkAdmin,adminHelper.coupon_page);

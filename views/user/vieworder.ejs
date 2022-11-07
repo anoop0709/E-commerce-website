@@ -1,5 +1,7 @@
 <section>
+    <% if(order.length >= 1){ %>
     <div class="container mx-auto ">
+       
         <% order.forEach((order)=>{ %>
         <div class="col-md-12 mb-5 mt-5 p-0" id="<%= order._id %>">
            <div class="col-md-12 border p-5 shadow-sm p-3 mb-5 bg-body rounded">
@@ -61,13 +63,30 @@
                                         <td colspan="12"><span class="h6 mx-2">Payment Method: </span> <%= order.order.paymentmethod %></td>
                                       </tr>
                                     <tr class="text-right">
-                                        <td colspan="12"><span class="h6 mx-2">Total Amount:</span>$<%= order.order.total%>.00</td>
+                                        <td colspan="12"><span class="h6 mx-2">Total Amount:</span>$<%= order.order.total %>.00</td>
                                       </tr>
-                                      <% if(order.order.status == 'placed'){ %>
+                                      
                                       <tr class="text-right">
-                                        <td colspan="12"><a class="h6 mx-2 btn btn-dark text-white"  onclick="downloadInvoice()">Download Invoice</a></td>
+                                        <td colspan="1"><a class="h6 mx-2 btn btn-primary text-white"  onclick="downloadInvoice()">Download Invoice</a></td>
+                                        <% if(order.order.status == 'placed'|| order.order.status == 'Processing' ){ %>
+                                            <% refund.forEach((refund)=>{ %>
+                                                <% if(refund.transactionid == order.transactionid){ %>
+                                                   
+                                                    <div class="bg-success b-0">
+                                                        <h4 class="text-white text-center w-50%">Refund request processing</h4>
+                                                    </div>
+                                                    
+                                                <% } %>
+                                                <% }) %>
+                                                    <td colspan="1"><a href="/refund/<%= order._id %>" class="h6 mx-2 btn btn-dark text-white" >Cancel Order</a></td>
+                                                   
+                                                   
+                                       
+                                                   
+                                       
+                                        <% } %>
                                       </tr>
-                                      <% } %>
+                                     
                                  
                                     
                                   <!-- </tr>   -->
@@ -79,6 +98,13 @@
         </div>
         <% }) %>
     </div>
+    
+    <% }else{ %>
+        <div class="mt-5 mb-5 p-5 text-center">
+            <h1 class="mt-5 mb-5 p-5 border">Order history is empty</h1>
+        </div>
+       
+        <% } %>
 </section>
 
 

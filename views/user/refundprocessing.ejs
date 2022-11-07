@@ -1,0 +1,38 @@
+<section>
+    <div class="container mb-5 mt-5">
+        <h3>REFUND REQUEST RECIEVED</h3>
+        <h5>Refund will take 5 to 7 business days to process once you return the product</h5>
+        <p>please contact us for further enquries</p>
+        <h5>your refund reference is <span class="text-danger h3"><%= refundreq._id %></span></h5>
+    </div>
+</section>
+
+<style>
+    section{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: fit-content;
+        padding: 50px;
+        left: 50%;
+        top:50%;    
+    }
+    #btnOrder,#btnHome{
+        border-radius: 5px;
+        background-color: rgb(251, 67, 67);
+        border: 0.5px solid ;
+        margin: 10px;
+        padding: 5px;
+        font-size: 20px;
+    }
+   
+    #btn{
+        margin-top: 50px;
+    }
+</style>

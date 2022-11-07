@@ -77,9 +77,10 @@ router.post('/placeorder',userauthMiddleware.checkUser,userhelper.place_order);
 router.post('/verify-payment',authMiddleware.checkUser,async (req,res)=>{
     console.log(req.body+ "body in verifypayment");
     let orderobj = req.body;
-    console.log(orderobj.userid);
+    console.log(orderobj);
    await userhelper.verifyPayment(req.body).then(()=>{
-     userhelper.changepaymentstatus(orderobj.order.receipt,orderobj.userid).then(()=>{
+     
+     userhelper.changepaymentstatus(orderobj.order.receipt,orderobj.userid,orderobj).then(()=>{
         res.json({status:true})
       }).catch((err)=>{
         console.log(err);
@@ -91,6 +92,9 @@ router.post('/verify-payment',authMiddleware.checkUser,async (req,res)=>{
   });
   router.get('/orderconfirmation/:orderid',authMiddleware.checkUser,userhelper.order_confirmation);
   router.get('/view-order/:userid',authMiddleware.checkUser,userhelper.view_order);
+  router.get('/refund/:orderid',authMiddleware.checkUser,userhelper.get_refund_page);
+  router.post('/refund/:orderid/:userid',authMiddleware.checkUser,userhelper.intiate_refund);
+
 
 // apply coupon to cart
 

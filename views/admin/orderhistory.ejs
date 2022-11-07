@@ -96,9 +96,17 @@
                                         <form action="/changeorderstatus/<%= order._id %>" method="post">
                                             <select type="button" class="btn btn-danger" name="orderStatus">
                                                 <option value="">Change Delivery Status</option>
-                                                <option value="Processing">Order Processing</option> 
-                                                <option value="Shipped">Shipped</option>
-                                                <option value="Canceled">Cancel Order</option>
+                                                <% if(order.order.status == 'Shipped'){ %>
+                                                 
+                                                  <option value="Shipped">Shipped</option>
+                                                 
+
+                                                  <% }else{ %>
+                                                    <option value="Processing">Order Processing</option> 
+                                                    <option value="Shipped">Shipped</option>
+                                                  
+                                                    <% } %>
+                                               
                                   
                                             </select>  
                                             <button type="submit" class="btn btn-dark mx-5">Update Status</button>           
@@ -114,7 +122,8 @@
         <% }) %>
         <div class="col-md-12 text-right">
             <nav aria-label="Page navigation example" class="text-center ">
-                <ul class="pagination text-center">
+              <ul class="uk-pagination" data-uk-pagination="{items:100, itemsOnPage:10}">
+               
                   <li class="page-item">
                     <a class="page-link text-dark" href="#" aria-label="Previous">
                       <span aria-hidden="true">&laquo;</span>
@@ -154,6 +163,9 @@
 
 <script src="https://unpkg.com/jspdf-invoice-template@1.4.3/dist/index.js"></script>
 <script>
+ 
+
+
      let orderDetails = '<%- JSON.stringify(order) %>';
      console.log(typeof(orderDetails));
      var order1 = JSON.parse(orderDetails);

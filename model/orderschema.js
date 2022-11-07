@@ -20,6 +20,16 @@ const orderSchema = new mongoose.Schema({
         type:ObjectId,
         ref:'users'
 
+    },
+    transactionid:{
+        type:String,
+        default:null
+       
+
+    },
+    refund:{
+        type:Boolean,
+        default:false
     }
 
 

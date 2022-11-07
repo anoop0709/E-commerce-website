@@ -19,7 +19,7 @@
                         <!-- <div class="row"><%= cartitem.product.productdescription %></div> -->
                     </div>
                    
-                        <div id="<%= cartitem.product._id %>" class="text-danger mx-5"><%= cartitem.qty %></div>
+                        <div id="<%= cartitem.product._id %>" class="text-danger mx-1"><%= cartitem.qty %></div>
                         <div class="col total" id="<%= cartitem.product._id %><%= Math.floor((Math.random()) + 1) %>">€ <%= cartitem.price %> .00</div>
 
                         <div>
@@ -55,7 +55,7 @@
                         
                    
                     
-                    <a href="#productdelete<%= cartitem.product._id %>" class="btn mx-2"  data-toggle="modal" >
+                    <a href="#productdelete<%= cartitem.product._id %>" class="btn mx-1"  data-toggle="modal" >
                         <i class="fa-solid fa-trash-can"></i>
                     </a>
                     <div class="modal fade" id="productdelete<%= cartitem.product._id %>" tabindex="-1" aria-labelledby="exampleModalLabel"
