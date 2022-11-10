@@ -816,4 +816,70 @@
 	
 	
 
-	
+	<script>
+                   
+		let userid = document.querySelector('#userid').value;
+		// let price = document.querySelector('#itemprice').textContent;
+		// let wishlist = document.querySelector('#wishlist')
+
+
+		async function addToCart(productid, price) {
+			let qtyinp = 1;
+			console.log(qtyinp);
+
+			let response = await fetch('/cart', {
+				method: 'POST',
+				body: JSON.stringify({ productid, userid, qtyinp, price }),
+				headers: { 'Content-Type': 'application/json' }
+			})
+			let check = await response.json();
+			if (check) {
+				let responseText = document.querySelector('.responsetext');
+				responseText.textContent = "item added to the cart";
+			}
+			setTimeout(() => {
+				location.reload();
+			}, 3000);
+
+		}
+
+
+
+		async function addTowishlist(proid, price) {
+
+
+			let responseT = document.querySelector('#responseText');
+			let wishbtn = document.getElementById(proid);
+
+
+			let qtyinp = 1;
+			console.log(qtyinp);
+
+			let response = await fetch('/wishlist', {
+				method: 'POST',
+				body: JSON.stringify({ proid, userid, qtyinp, price }),
+				headers: { 'Content-Type': 'application/json' }
+			})
+			let res = await response.json();
+			console.log(res);
+			if (res == "alreadyexists") {
+				responseT.textContent = "item already in the wishlist";
+
+
+			} else {
+				responseT.textContent = "item added to the wishlist";
+
+			}
+			setTimeout(() => {
+				location.reload();
+
+			}, 3000)
+
+
+
+
+
+
+		}
+
+	</script>

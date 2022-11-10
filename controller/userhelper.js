@@ -777,7 +777,7 @@ let products = await Product.find({});
     place_order: async (req, res) => {
         const userid = req.body.userid;
         const total = req.body.total;
-        let coupon;
+        let usercoupon;
         const token = req.cookies.coupon;
 
         if (token) {
@@ -785,7 +785,7 @@ let products = await Product.find({});
                 if (err) {
                     console.log(err.message);
                 } else {
-                    coupon = decodedToken;
+                    usercoupon = decodedToken;
 
                 }
             })
@@ -806,7 +806,7 @@ let products = await Product.find({});
         await Order.create({ products: cartitems, order: orders, user: userid }).then(async (orderDetails) => {
 
             if (req.body.paymentmethod == 'cod') {
-                if (coupon) {
+                if (usercoupon) {
                     const coupons = await Coupon.findOne({ coupon: coupon.id });
                     coupons.userid.push(userid);
                     await coupons.save();
@@ -833,7 +833,7 @@ let products = await Product.find({});
             if (req.body.paymentmethod == 'card') {
                 generateRazorpay(objectId(orderDetails._id), total, userid).then(async (response) => {
                     
-                    if (coupon) {
+                    if (usercoupon) {
                         const coupons = await Coupon.findOne({ coupon: coupon.id });
                         coupons.userid.push(userid);
                         await coupons.save();
@@ -959,7 +959,7 @@ let products = await Product.find({});
         let totalprice = user.cart.map((el) => {
             return el.price;
         })
-        const coupon = await Coupon.findOne({ coupon: couponcode });
+        const targetedcoupon = await Coupon.findOne({ coupon: couponcode });
         const discountvalue = coupon.couponValue;
         const token = req.cookies.coupon;
 
@@ -974,27 +974,27 @@ let products = await Product.find({});
             })
         }
 
-        if (coupon) {
+        if (targetedcoupon) {
             if (sessioncoupon) {
                 res.json("Already applied a coupon");
             } else {
 
-                if (coupon.userid.length == 0) {
-                    if (total >= coupon.minAmount && total <= coupon.maxAmount) {
+                if (targetedcoupon.userid.length == 0) {
+                    if (total >= targetedcoupon.minAmount && total <= targetedcoupon.maxAmount) {
                         let token = createToken(couponcode);
-                        total = total - coupon.couponValue;
+                        total = total - targetedcoupon.couponValue;
                         res.cookie('coupon', token, { httpOnly: true, maxAge: maxAge * 1000 });
                         res.json({ total, discountvalue });
                        
                       
 
                     } else {
-                        res.json(`The total amount must be between $ ${coupon.minAmount}.00 and $ ${coupon.maxAmount}.00 to use this Coupon`)
+                        res.json(`The total amount must be between $ ${targetedcoupon.minAmount}.00 and $ ${targetedcoupon.maxAmount}.00 to use this Coupon`)
                         
                     }
 
                 } else {
-                    const useridexist = coupon.userid.map(async (user) => {
+                    const useridexist = targetedcoupon.userid.map(async (user) => {
                         if(user==userId){
                             return user;
                         }
@@ -1009,16 +1009,16 @@ let products = await Product.find({});
                            return;
                           
                         } 
-                         if (total >= coupon.minAmount && total <= coupon.maxAmount) {
+                         if (total >= targetedcoupon.minAmount && total <= targetedcoupon.maxAmount) {
                                 let token = createToken(couponcode);
-                                total = total - coupon.couponValue;
+                                total = total - targetedcoupon.couponValue;
                                 res.cookie('coupon', token, { httpOnly: true, maxAge: maxAge * 1000 })
                                 res.json({ total, discountvalue });
                               
                                
 
                             } else {
-                                res.json(`The total amount must be between ${coupon.minAmount} and ${coupon.maxAmount} to use this Coupon`)
+                                res.json(`The total amount must be between ${targetedcoupon.minAmount} and ${targetedcoupon.maxAmount} to use this Coupon`)
                                
                             }
                         
@@ -1033,6 +1033,9 @@ let products = await Product.find({});
 
 
     },
+    get_contact:(req,res)=>{
+        res.render('./user/contactus',{layout:"layout"});
+    }
 
 
 }

@@ -27,6 +27,7 @@ router.post('/login',userhelper.doLogin);
 router.get('/logout',userhelper.getlogout);
 //user login and signup ---->
 
+router.get('/contact',userhelper.get_contact)
 
 //user account routes--->
 router.get('/useraccount/:id',authMiddleware.checkUser,userhelper.userAccount);
