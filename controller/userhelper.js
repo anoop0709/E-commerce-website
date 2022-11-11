@@ -263,6 +263,8 @@ let products = await Product.find({});
                 }
             } catch (err) {
                 console.log(err);
+                res.render('./user/404.ejs')
+
             }
 
         }
@@ -288,10 +290,12 @@ let products = await Product.find({});
 
         console.log(userId, name, email, phone, address);
         try {
-            let user = await User.findOneAndUpdate({ _id: userId }, { $set: { fname: name, email: email, phone: phone, address: address } });
+            await User.findOneAndUpdate({ _id: userId }, { $set: { fname: name, email: email, phone: phone, address: address } });
             res.redirect('/useraccount/' + userId);
         } catch (err) {
             console.log(err);
+            res.render('./user/404.ejs')
+
         }
     },
     add_address: async (req, res) => {
