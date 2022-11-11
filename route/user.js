@@ -100,4 +100,8 @@ router.post('/verify-payment',authMiddleware.checkUser,async (req,res)=>{
 // apply coupon to cart
 
 router.post('/applycoupontocart',authMiddleware.checkUser,userhelper.apply_coupon);
+
+// contact us page
+
+router.get('/contactus',authMiddleware.checkUser,userhelper.get_contact)
 module.exports = router;
